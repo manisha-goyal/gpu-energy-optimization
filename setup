@@ -6,6 +6,10 @@ docker build --platform linux/amd64 -t ubuntu-gcc-cuda .
 # Run the container interactively
 docker run -it ubuntu-gcc-cuda
 
+# ------------------- Open Docker Container -------------------
+# On Mac: Press Cmd+Shift+P
+# Select "Remote-Containers: Reopen in Container"
+# Navigate to the default working directory /root
 
 # ------------------- Setup Steps -------------------
 # Navigate to the Accel-Sim framework directory
