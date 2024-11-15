@@ -31,13 +31,13 @@ pip3 install -r requirements.txt
 # Source the GPU simulator environment setup script
 source ./gpu-simulator/setup_environment.sh
 
-# Add kernel information for GPU simulation (custom logic may go here)
+# Add kernel information for GPU simulation in accel-sim-framework/gpu-simulator/trace-driven/trace_drive.cc (custom logic may go here)
 : kernel_info_t(gridDim, blockDim, m_function_info,
                   std::map<std::string, const cudaArray *>(),
                   std::map<std::string, const textureInfo *>() 
     ) {
 
-# Print GPU simulation statistics after kernel execution
+# Print GPU simulation statistics after kernel execution in accel-sim-framework/gpu-simulator/main.cc
 m_gpgpu_sim->print_stats(finished_kernel_uid);      
 
 # Build the GPU simulator
