@@ -7,14 +7,6 @@ docker build --platform linux/amd64 -t ubuntu-gcc-cuda .
 docker run -it ubuntu-gcc-cuda
 
 
-# ------------------- Install Dependencies -------------------
-# Install Cython using pip
-pip3 install cython
-
-# Download the CUDA Toolkit installer (version 10.1) to /tmp
-wget -P /tmp https://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.243_418.87.00_linux.run
-
-
 # ------------------- Setup Steps -------------------
 # Navigate to the Accel-Sim framework directory
 cd accel-sim-framework
@@ -60,13 +52,52 @@ make -j -C ./gpu-app-collection/src rodinia_2.0-ft
 # Build the data required for benchmarks
 make -C ./gpu-app-collection/src data
 
+
 # ------------------- Run Simulations -------------------
-# Run simulations for the benchmark on a specific GPU configuration (e.g., QV100-PTX)
+# Run simulations for the "rodinia_2.0-ft" benchmark on the "QV100-PTX" GPU configuration.
+# The results will be stored under the simulation name "myTest-PTX".
 ./util/job_launching/run_simulations.py -B rodinia_2.0-ft -C QV100-PTX -N myTest-PTX
 
-# Monitor simulation progress with verbose output
+# Monitor the progress of the simulation with verbose output.
+# This command provides detailed logs of the running simulation.
 ./util/job_launching/monitor_func_test.py -v -N myTest-PTX
 
-# ------------------- Post-Simulation Steps -------------------
-# Collect statistics after the job finishes and save them to stats.csv
-./util/job_launching/get_stats.py -N myTest | tee stats.csv
+# Collect the simulation statistics after the job finishes.
+# The output will be saved to a file named "stats.csv" for further analysis.
+./util/job_launching/get_stats.py -N myTest-PTX | tee stats.csv
+
+# Plot the statistics from the "stats.csv" file using the plotting utility.
+# This generates visual representations of the simulation data.
+./util/plotting/plot-get-stats.py -c stats.csv
+
+# Navigate to the directory containing HTML files for plotting.
+cd ./util/plotting/htmls/
+
+# Start a local HTTP server on port 8080 to view generated HTML reports in a web browser.
+# This makes it easier to analyze the data visually.
+python3 -m http.server 8080
+
+
+# ------------------- Accelwattch Simulations -------------------
+# Run simulations for the "rodinia_2.0-ft" benchmark on the "QV100-Accelwattch_PTX_SIM" configuration.
+# This configuration includes AccelWattch for energy modeling. Results will be saved under "myTest-Wattch".
+./util/job_launching/run_simulations.py -B rodinia_2.0-ft -C QV100-Accelwattch_PTX_SIM -N myTest-Wattch
+
+# Monitor the progress of the AccelWattch-enabled simulation with verbose output.
+# Detailed logs will help track the simulation's performance and progress.
+./util/job_launching/monitor_func_test.py -v -N myTest-Wattch
+
+# Collect the simulation statistics for the "myTest-Wattch" simulation.
+# The output will be saved to a file named "wattch-stats.csv".
+./util/job_launching/get_stats.py -N myTest-Wattch | tee wattch-stats.csv
+
+# Generate plots from the "wattch-stats.csv" file using the plotting utility.
+# This produces graphical insights for the AccelWattch-enabled simulation results.
+./util/plotting/plot-get-stats.py -c wattch-stats.csv
+
+# Navigate to the directory containing HTML files for plotting.
+cd ./util/plotting/htmls/
+
+# Start a local HTTP server on port 8080 to view generated HTML reports in a web browser.
+# This makes it easier to analyze the data visually.
+python3 -m http.server 8080
