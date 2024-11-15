@@ -1,0 +1,71 @@
+# ------------------- Build Docker Image -------------------
+# Build the Docker image using the specified platform (linux/amd64)
+docker build --platform linux/amd64 -t ubuntu-gcc-cuda .
+
+# ------------------- Run Docker Container -------------------
+# Run the container interactively
+docker run -it ubuntu-gcc-cuda
+
+
+# ------------------- Install Dependencies -------------------
+# Install Cython using pip
+pip3 install cython
+
+# Download the CUDA Toolkit installer (version 10.1) to /tmp
+wget -P /tmp https://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.243_418.87.00_linux.run
+
+
+# ------------------- Setup Steps -------------------
+# Navigate to the Accel-Sim framework directory
+cd accel-sim-framework
+
+# Install NVBit, a dynamic instrumentation framework for GPU binaries
+./util/tracer_nvbit/install_nvbit.sh  
+
+# Build the tracer using NVBit
+make -C ./util/tracer_nvbit/  
+
+# Install Python dependencies for Accel-Sim
+pip3 install -r requirements.txt
+
+# Source the GPU simulator environment setup script
+source ./gpu-simulator/setup_environment.sh
+
+# Add kernel information for GPU simulation (custom logic may go here)
+: kernel_info_t(gridDim, blockDim, m_function_info,
+                  std::map<std::string, const cudaArray *>(),
+                  std::map<std::string, const textureInfo *>() 
+    ) {
+
+# Print GPU simulation statistics after kernel execution
+m_gpgpu_sim->print_stats(finished_kernel_uid);      
+
+# Build the GPU simulator
+make -j -C ./gpu-simulator/
+
+# Check if the simulation binary (accel-sim.out) was created in ./gpu-simulator/bin/release
+
+
+# ------------------- GPU Application Collection -------------------
+# Clone the GPU application collection repository
+git clone https://github.com/accel-sim/gpu-app-collection
+
+# Source the setup environment for the GPU application collection
+source ./gpu-app-collection/src/setup_environment
+
+# Build a specific benchmark (Rodinia 2.0) for functional tests
+make -j -C ./gpu-app-collection/src rodinia_2.0-ft
+
+# Build the data required for benchmarks
+make -C ./gpu-app-collection/src data
+
+# ------------------- Run Simulations -------------------
+# Run simulations for the benchmark on a specific GPU configuration (e.g., QV100-PTX)
+./util/job_launching/run_simulations.py -B rodinia_2.0-ft -C QV100-PTX -N myTest-PTX
+
+# Monitor simulation progress with verbose output
+./util/job_launching/monitor_func_test.py -v -N myTest-PTX
+
+# ------------------- Post-Simulation Steps -------------------
+# Collect statistics after the job finishes and save them to stats.csv
+./util/job_launching/get_stats.py -N myTest | tee stats.csv
