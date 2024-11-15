@@ -43,7 +43,8 @@ m_gpgpu_sim->print_stats(finished_kernel_uid);
 # Build the GPU simulator
 make -j -C ./gpu-simulator/
 
-# Check if the simulation binary (accel-sim.out) was created in ./gpu-simulator/bin/release
+# Check if the simulation binary (accel-sim.out) was created
+ls ./gpu-simulator/bin/release
 
 
 # ------------------- GPU Application Collection -------------------
