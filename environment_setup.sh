@@ -1,12 +1,7 @@
 #!/bin/bash
 
-LOG_FILE="setup_log.txt"
+LOG_FILE="environment_setup_log.txt"
 > "$LOG_FILE" # Clear the log file at the start
-
-log_and_exit() {
-    echo "$1" | tee -a "$LOG_FILE"
-    exit 1
-}
 
 log_message() {
     echo "$1" | tee -a "$LOG_FILE"
@@ -14,92 +9,92 @@ log_message() {
 
 # Install Python dependencies for Accel-Sim
 log_message "Installing Python dependencies for Accel-Sim..."
-pip3 install -r requirements.txt >> "$LOG_FILE" 2>&1
+pip3 install -r requirements.txt
 if [ $? -ne 0 ]; then
-    log_and_exit "Failed to install Python dependencies."
+    log_message "Failed to install Python dependencies."
 fi
 
 # Source GPU simulator environment setup
 log_message "Sourcing GPU simulator environment setup..."
-. ./gpu-simulator/setup_environment.sh >> "$LOG_FILE" 2>&1
+. ./gpu-simulator/setup_environment.sh
 if [ $? -ne 0 ]; then
-    log_and_exit "Failed to source GPU simulator environment setup."
+    log_message "Failed to source GPU simulator environment setup."
 fi
 
 # Modify trace_drive.cc
 log_message "Modifying trace_drive.cc..."
 sed -i 's|    : kernel_info_t(gridDim, blockDim, m_function_info) {|    : kernel_info_t(gridDim, blockDim, m_function_info, std::map<std::string, const cudaArray *>(), std::map<std::string, const textureInfo *>()) {|' \
-    gpu-simulator/trace-driven/trace_driven.cc >> "$LOG_FILE" 2>&1
+    gpu-simulator/trace-driven/trace_driven.cc
 if [ $? -ne 0 ]; then
-    log_and_exit "Failed to modify trace_driven.cc."
+    log_message "Failed to modify trace_driven.cc."
 fi
 
 # Modify main.cc
 log_message "Modifying main.cc..."
 sed -i 's|      m_gpgpu_sim->print_stats();|      m_gpgpu_sim->print_stats(finished_kernel_uid);|' \
-    gpu-simulator/main.cc >> "$LOG_FILE" 2>&1
+    gpu-simulator/main.cc
 if [ $? -ne 0 ]; then
-    log_and_exit "Failed to modify main.cc."
+    log_message "Failed to modify main.cc."
 fi
 
 # Build the GPU simulator
 log_message "Building the GPU simulator..."
-make -j -C ./gpu-simulator/ >> "$LOG_FILE" 2>&1
+make -j -C ./gpu-simulator/
 if [ $? -ne 0 ]; then
-    log_and_exit "Failed to build GPU simulator."
+    log_message "Failed to build GPU simulator."
 fi
 
 # Verify the simulation binary
 log_message "Verifying simulation binary..."
-ls ./gpu-simulator/bin/release >> "$LOG_FILE" 2>&1
+ls ./gpu-simulator/bin/release
 if [ $? -ne 0 ]; then
-    log_and_exit "Simulation binary not found."
+    log_message "Simulation binary not found."
 fi
 
 # Clone the GPU application collection repository
 log_message "Cloning the GPU application collection repository..."
-git clone https://github.com/accel-sim/gpu-app-collection >> "$LOG_FILE" 2>&1
+git clone https://github.com/accel-sim/gpu-app-collection
 if [ $? -ne 0 ]; then
-    log_and_exit "Failed to clone the GPU application collection repository."
+    log_message "Failed to clone the GPU application collection repository."
 fi
 
 # Source the setup environment for the GPU application collection
 log_message "Sourcing the GPU application collection environment..."
-. ./gpu-app-collection/src/setup_environment >> "$LOG_FILE" 2>&1
+. ./gpu-app-collection/src/setup_environment
 if [ $? -ne 0 ]; then
-    log_and_exit "Failed to source the GPU application collection environment."
+    log_message "Failed to source the GPU application collection environment."
 fi
 
 # Build a specific benchmark (Rodinia 3.1) for functional tests
 log_message "Building Rodinia 3.1 benchmark..."
-make -j -C ./gpu-app-collection/src rodinia-3.1 >> "$LOG_FILE" 2>&1
+make -j -C ./gpu-app-collection/src rodinia-3.1
 if [ $? -ne 0 ]; then
-    log_and_exit "Failed to build Rodinia 3.1 benchmark."
+    log_message "Failed to build Rodinia 3.1 benchmark."
 fi
 
 # Build the data required for benchmarks
 log_message "Building data required for benchmarks..."
-make -C ./gpu-app-collection/src data >> "$LOG_FILE" 2>&1
+make -C ./gpu-app-collection/src data
 if [ $? -ne 0 ]; then
-    log_and_exit "Failed to build benchmark data."
+    log_message "Failed to build benchmark data."
 fi
 
 # Download and install the CUDA 11 toolkit
 log_message "Downloading and installing the CUDA 11 toolkit..."
 mkdir -p /tmp/cuda-install
 cd /tmp/cuda-install
-wget http://developer.download.nvidia.com/compute/cuda/11.0.1/local_installers/cuda_11.0.1_450.36.06_linux.run >> "$LOG_FILE" 2>&1
+wget http://developer.download.nvidia.com/compute/cuda/11.0.1/local_installers/cuda_11.0.1_450.36.06_linux.run
 if [ $? -ne 0 ]; then
-    log_and_exit "Failed to download CUDA 11 installer."
+    log_message "Failed to download CUDA 11 installer."
 fi
 
 # Ensure the installer has executable permissions
-chmod +x cuda_11.0.1_450.36.06_linux.run >> "$LOG_FILE" 2>&1
+chmod +x cuda_11.0.1_450.36.06_linux.run
 
 # Run the installer
-sh cuda_11.0.1_450.36.06_linux.run --silent --toolkit --toolkitpath=$HOME/cuda >> "$LOG_FILE" 2>&1
+sh cuda_11.0.1_450.36.06_linux.run --silent --toolkit --toolkitpath=$HOME/cuda
 if [ $? -ne 0 ]; then
-    log_and_exit "Failed to install CUDA 11 toolkit."
+    log_message "Failed to install CUDA 11 toolkit."
 fi
 
 log_message "Setup completed successfully!"
