@@ -1,100 +1,105 @@
 #!/bin/bash
 
-# TODO: update benchmark to Rodinia 3.1
+LOG_FILE="setup_log.txt"
+> "$LOG_FILE" # Clear the log file at the start
 
-# Install NVBit and build tracer
-echo "Installing NVBit and building tracer..."
-./util/tracer_nvbit/install_nvbit.sh
-if [ $? -ne 0 ]; then
-    echo "Failed to install NVBit."
+log_and_exit() {
+    echo "$1" | tee -a "$LOG_FILE"
     exit 1
-fi
+}
 
-make -C ./util/tracer_nvbit/
-if [ $? -ne 0 ]; then
-    echo "Failed to build tracer."
-    exit 1
-fi
+log_message() {
+    echo "$1" | tee -a "$LOG_FILE"
+}
 
 # Install Python dependencies for Accel-Sim
-echo "Installing Python dependencies for Accel-Sim..."
-pip3 install -r requirements.txt
+log_message "Installing Python dependencies for Accel-Sim..."
+pip3 install -r requirements.txt >> "$LOG_FILE" 2>&1
 if [ $? -ne 0 ]; then
-    echo "Failed to install Python dependencies."
-    exit 1
+    log_and_exit "Failed to install Python dependencies."
 fi
 
 # Source GPU simulator environment setup
-echo "Sourcing GPU simulator environment setup..."
-. ./gpu-simulator/setup_environment.sh
+log_message "Sourcing GPU simulator environment setup..."
+. ./gpu-simulator/setup_environment.sh >> "$LOG_FILE" 2>&1
 if [ $? -ne 0 ]; then
-    echo "Failed to source GPU simulator environment setup."
-    exit 1
+    log_and_exit "Failed to source GPU simulator environment setup."
 fi
 
 # Modify trace_drive.cc
-echo "Modifying trace_drive.cc..."
+log_message "Modifying trace_drive.cc..."
 sed -i 's|    : kernel_info_t(gridDim, blockDim, m_function_info) {|    : kernel_info_t(gridDim, blockDim, m_function_info, std::map<std::string, const cudaArray *>(), std::map<std::string, const textureInfo *>()) {|' \
-    gpu-simulator/trace-driven/trace_driven.cc
+    gpu-simulator/trace-driven/trace_driven.cc >> "$LOG_FILE" 2>&1
 if [ $? -ne 0 ]; then
-    echo "Failed to modify trace_driven.cc."
-    exit 1
+    log_and_exit "Failed to modify trace_driven.cc."
 fi
 
 # Modify main.cc
-echo "Modifying main.cc..."
+log_message "Modifying main.cc..."
 sed -i 's|      m_gpgpu_sim->print_stats();|      m_gpgpu_sim->print_stats(finished_kernel_uid);|' \
-    gpu-simulator/main.cc
+    gpu-simulator/main.cc >> "$LOG_FILE" 2>&1
 if [ $? -ne 0 ]; then
-    echo "Failed to modify main.cc."
-    exit 1
+    log_and_exit "Failed to modify main.cc."
 fi
 
 # Build the GPU simulator
-echo "Building the GPU simulator..."
-make -j -C ./gpu-simulator/
+log_message "Building the GPU simulator..."
+make -j -C ./gpu-simulator/ >> "$LOG_FILE" 2>&1
 if [ $? -ne 0 ]; then
-    echo "Failed to build GPU simulator."
-    exit 1
+    log_and_exit "Failed to build GPU simulator."
 fi
 
 # Verify the simulation binary
-ls ./gpu-simulator/bin/release
+log_message "Verifying simulation binary..."
+ls ./gpu-simulator/bin/release >> "$LOG_FILE" 2>&1
 if [ $? -ne 0 ]; then
-    echo "Simulation binary not found."
-    exit 1
+    log_and_exit "Simulation binary not found."
 fi
 
 # Clone the GPU application collection repository
-echo "Cloning the GPU application collection repository..."
-git clone https://github.com/accel-sim/gpu-app-collection
+log_message "Cloning the GPU application collection repository..."
+git clone https://github.com/accel-sim/gpu-app-collection >> "$LOG_FILE" 2>&1
 if [ $? -ne 0 ]; then
-    echo "Failed to clone the GPU application collection repository."
-    exit 1
+    log_and_exit "Failed to clone the GPU application collection repository."
 fi
 
 # Source the setup environment for the GPU application collection
-echo "Sourcing the GPU application collection environment..."
-. ./gpu-app-collection/src/setup_environment
+log_message "Sourcing the GPU application collection environment..."
+. ./gpu-app-collection/src/setup_environment >> "$LOG_FILE" 2>&1
 if [ $? -ne 0 ]; then
-    echo "Failed to source the GPU application collection environment."
-    exit 1
+    log_and_exit "Failed to source the GPU application collection environment."
 fi
 
-# Build a specific benchmark (Rodinia 2.0) for functional tests
-echo "Building Rodinia 2.0 benchmark..."
-make -j -C ./gpu-app-collection/src rodinia_2.0-ft
+# Build a specific benchmark (Rodinia 3.1) for functional tests
+log_message "Building Rodinia 3.1 benchmark..."
+make -j -C ./gpu-app-collection/src rodinia-3.1 >> "$LOG_FILE" 2>&1
 if [ $? -ne 0 ]; then
-    echo "Failed to build Rodinia 2.0 benchmark."
-    exit 1
+    log_and_exit "Failed to build Rodinia 3.1 benchmark."
 fi
 
 # Build the data required for benchmarks
-echo "Building data required for benchmarks..."
-make -C ./gpu-app-collection/src data
+log_message "Building data required for benchmarks..."
+make -C ./gpu-app-collection/src data >> "$LOG_FILE" 2>&1
 if [ $? -ne 0 ]; then
-    echo "Failed to build benchmark data."
-    exit 1
+    log_and_exit "Failed to build benchmark data."
 fi
 
-echo "Setup completed successfully!"
+# Download and install the CUDA 11 toolkit
+log_message "Downloading and installing the CUDA 11 toolkit..."
+mkdir -p /tmp/cuda-install
+cd /tmp/cuda-install
+wget http://developer.download.nvidia.com/compute/cuda/11.0.1/local_installers/cuda_11.0.1_450.36.06_linux.run >> "$LOG_FILE" 2>&1
+if [ $? -ne 0 ]; then
+    log_and_exit "Failed to download CUDA 11 installer."
+fi
+
+# Ensure the installer has executable permissions
+chmod +x cuda_11.0.1_450.36.06_linux.run >> "$LOG_FILE" 2>&1
+
+# Run the installer
+sh cuda_11.0.1_450.36.06_linux.run --silent --toolkit --toolkitpath=$HOME/cuda >> "$LOG_FILE" 2>&1
+if [ $? -ne 0 ]; then
+    log_and_exit "Failed to install CUDA 11 toolkit."
+fi
+
+log_message "Setup completed successfully!"

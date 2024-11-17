@@ -1,25 +1,32 @@
 #!/bin/bash
 
-# TODO: Update run commands to use SASS instead of PTX
-# TODO: Comment out apps in accel-sim-framework/util/job_launching/apps/define-all-apps.yml
-
 # Declare an associative array to map GPUs to their clock frequencies
 declare -A GPU_CLOCKS
 GPU_CLOCKS=(
-    ["SM7_QV100"]="1132.0 1832.0"
-    #["SM7_TITANV"]="1200.0 1800.0"
-    #["SM75_RTX2060"]="1000 1200"
-    #["SM86_RTX3070"]="1200 1400 1600"
+    # Pascal
+    ["SM6_TITANX"]="1417.0"
+    # Volta
+    #["SM7_GV100"]="1447.0"
+    #["SM7_QV100"]="1132.0"
+    #["SM7_TITANV"]="1200.0"
+    # Turing
+    #["SM75_RTX2060"]="1365"
+    #["SM75_RTX2060_S"]="1905.0"
 )
 
-# Function to extract short GPU name (e.g., QV100) from the full GPU name (e.g., SM7_QV100)
-get_short_gpu_name() {
-    local full_name=$1
-    echo "${full_name#*_}" # Extract everything after the first underscore
-}
-
-# Set the memory clock frequency and other default domains (example: 850.0 MHz)
-MEMORY_CLOCK=850.0
+# Declare an associative array to map GPUs to their memory clock frequencies
+declare -A GPU_MEMORY_CLOCKS
+GPU_MEMORY_CLOCKS=(
+    # Pascal
+    ["SM6_TITANX"]="2500.0"
+    # Volta
+    ["SM7_GV100"]="850.0"
+    ["SM7_QV100"]="877.0"
+    ["SM7_TITANV"]="877.0"
+    # Turing
+    ["SM75_RTX2060"]="3500.5"
+    ["SM75_RTX2060_S"]="3500.0"
+)
 
 # Base configuration directory structure
 BASE_CONFIG_DIR="./gpu-simulator/gpgpu-sim/configs/tested-cfgs"
@@ -27,18 +34,36 @@ BASE_CONFIG_DIR="./gpu-simulator/gpgpu-sim/configs/tested-cfgs"
 # Results directory
 RESULTS_DIR="./experiment-results"
 
+# Function to extract short GPU name (e.g., QV100) from the full GPU name (e.g., SM7_QV100)
+get_short_gpu_name() {
+    local full_name=$1
+    echo "${full_name#*_}" # Extract everything after the first underscore
+}
+
+# Function to determine trace path based on GPU architecture
+get_trace_path() {
+    local gpu_name=$1
+    case "$gpu_name" in
+        SM6_*) echo "/root/accelwattch_traces/accelwattch_pascal_traces/11.0/" ;;
+        SM7_*) echo "/root/accelwattch_traces/accelwattch_volta_traces/11.0/" ;;
+        SM75_*) echo "/root/accelwattch_traces/accelwattch_turing_traces/11.0/" ;;
+        *) echo "Unknown architecture for $gpu_name"; exit 1 ;;
+    esac
+}
+
 # Function to update the clock frequencies in the gpugpusim.config file
 update_clock_frequency() {
     local config_file=$1
     local core_freq=$2
-    echo "Updating second clock domains in $config_file to ${core_freq}:${core_freq}:${core_freq}:${MEMORY_CLOCK}..."
-    sed -i '0,/^.*-gpgpu_clock_domains .*/{n;s/^.*-gpgpu_clock_domains .*/-gpgpu_clock_domains '"${core_freq}:${core_freq}:${core_freq}:${MEMORY_CLOCK}"'/}' "$config_file"
+    local mem_freq=$3
+    echo "Updating second clock domains in $config_file to ${core_freq}:${core_freq}:${core_freq}:${mem_freq}..."
+    sed -i '0,/^.*-gpgpu_clock_domains .*/{n;s/^.*-gpgpu_clock_domains .*/-gpgpu_clock_domains '"${core_freq}:${core_freq}:${core_freq}:${mem_freq}"'/}' "$config_file"
 }
 
 # Function to copy simulation results for a given GPU and clock frequency
 copy_simulation_results() {
     local sim_name=$1    # e.g., "SM7_QV100-1132.0"
-    local short_gpu_name=$2    # e.g., "SM7_QV100"
+    local short_gpu_name=$2    # e.g., "QV100"
     local results_dir=$3 # Base results directory, e.g., "./experiment-results"
 
     local sim_run_dir="./sim_run_10.1" # Simulation run directory
@@ -78,6 +103,7 @@ for GPU_NAME in "${!GPU_CLOCKS[@]}"; do
     
     # Get the clock frequencies for this GPU
     CLOCK_FREQUENCIES=(${GPU_CLOCKS[$GPU_NAME]})
+    MEMORY_CLOCK="${GPU_MEMORY_CLOCKS[$GPU_NAME]}"
     
     # Set the config file path for the GPU
     CONFIG_FILE="${BASE_CONFIG_DIR}/${GPU_NAME}/gpgpusim.config"
@@ -87,6 +113,8 @@ for GPU_NAME in "${!GPU_CLOCKS[@]}"; do
         echo "Error: Config file $CONFIG_FILE not found for GPU $GPU_NAME"
         continue
     fi
+
+    TRACE_PATH=$(get_trace_path "$GPU_NAME")
     
     # Loop through each core clock frequency for the current GPU
     for CORE_CLOCK in "${CLOCK_FREQUENCIES[@]}"; do
@@ -99,13 +127,13 @@ for GPU_NAME in "${!GPU_CLOCKS[@]}"; do
         mkdir -p "$GPU_RESULTS_DIR"
         
         # Update the clock frequency in the config file
-        update_clock_frequency "$CONFIG_FILE" "$CORE_CLOCK"
+        update_clock_frequency "$CONFIG_FILE" "$CORE_CLOCK" "$MEMORY_CLOCK"
 
         # Record the start time
         START_TIME=$(date +%s)
 
         # Run the simulation
-        ./util/job_launching/run_simulations.py -B rodinia_2.0-ft -C "${SHORT_GPU_NAME}-Accelwattch_PTX_SIM" -N "$SIM_NAME" &
+        ./util/job_launching/run_simulations.py -B rodinia-3.1 -C "${SHORT_GPU_NAME}-Accelwattch_SASS_SIM" -T "$TRACE_PATH" -N "$SIM_NAME" &
         SIM_PID=$!
 
         echo "Waiting for simulation process (PID: $SIM_PID) to complete..."

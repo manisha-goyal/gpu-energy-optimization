@@ -23,6 +23,17 @@ COPY environment_setup.sh /tmp/environment_setup.sh
 RUN mv /tmp/environment_setup.sh /root/accel-sim-framework/environment_setup.sh && \
     chmod +x /root/accel-sim-framework/environment_setup.sh
 
+# Copy the AccelWattch traces
+COPY accelwattch_traces/accelwattch_pascal_traces.tgz /root/accelwattch_traces/accelwattch_pascal_traces.tgz
+
+# Unzip the archive
+RUN mkdir -p /root/accelwattch_traces && \
+    tar -xzf /root/accelwattch_traces/accelwattch_pascal_traces.tgz -C /root/accelwattch_traces && \
+    rm /root/accelwattch_traces/accelwattch_pascal_traces.tgz
+
+# Copy the updated list of apps to run for simulation
+COPY define-all-apps.yml /root/accel-sim-framework/util/job_launching/apps/define-all-apps.yml
+
 # Define working directory
 WORKDIR /workspace
 
