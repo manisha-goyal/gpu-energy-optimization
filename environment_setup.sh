@@ -92,7 +92,7 @@ fi
 chmod +x cuda_11.0.1_450.36.06_linux.run
 
 # Run the installer
-sh cuda_11.0.1_450.36.06_linux.run --silent --toolkit --toolkitpath=$HOME/cuda
+. cuda_11.0.1_450.36.06_linux.run --silent --toolkit --toolkitpath=$HOME/cuda
 if [ $? -ne 0 ]; then
     log_message "Failed to install CUDA 11 toolkit."
 fi

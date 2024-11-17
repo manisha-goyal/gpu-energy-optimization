@@ -140,7 +140,6 @@ Before running the script:
    tar -xvzf accelwattch_traces/accelwattch_turing_traces.tgz -C /root/accelwattch_traces
    tar -xvzf accelwattch_traces/accelwattch_volta_traces.tgz -C /root/accelwattch_traces
    ```
-
 ---
 
 ### Experiment Results
