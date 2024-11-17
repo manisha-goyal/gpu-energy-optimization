@@ -135,6 +135,11 @@ Before running the script:
      - Pascal traces: `/root/accelwattch_traces/accelwattch_pascal_traces/11.0/`
      - Volta traces: `/root/accelwattch_traces/accelwattch_volta_traces/11.0/`
      - Turing traces: `/root/accelwattch_traces/accelwattch_turing_traces/11.0/`
+   ```bash
+   tar -xvzf accelwattch_traces/accelwattch_pascal_traces.tgz -C /root/accelwattch_traces
+   tar -xvzf accelwattch_traces/accelwattch_turing_traces.tgz -C /root/accelwattch_traces
+   tar -xvzf accelwattch_traces/accelwattch_volta_traces.tgz -C /root/accelwattch_traces
+   ```
 
 ---
 
