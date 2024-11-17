@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# TODO: Update run commands to use SASS instead of PTX
+# TODO: Comment out apps in accel-sim-framework/util/job_launching/apps/define-all-apps.yml
+
 # Declare an associative array to map GPUs to their clock frequencies
 declare -A GPU_CLOCKS
 GPU_CLOCKS=(
