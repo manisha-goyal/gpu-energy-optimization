@@ -4,14 +4,14 @@
 declare -A GPU_CLOCKS
 GPU_CLOCKS=(
     # Pascal
-    ["SM6_TITANX"]="1417.0"
+    ["SM6_TITANX"]="1200.0"
     # Volta
-    #["SM7_GV100"]="1447.0"
-    #["SM7_QV100"]="1132.0"
-    #["SM7_TITANV"]="1200.0"
-    # Turing
-    #["SM75_RTX2060"]="1365"
-    #["SM75_RTX2060_S"]="1905.0"
+    # ["SM7_GV100"]="1230.0 1447.0 1660.0"
+    # ["SM7_QV100"]="960.0 1132.0 1300.0"
+    # ["SM7_TITANV"]="1020.0 1200.0 1380.0"
+    # # Turing
+    # ["SM75_RTX2060"]="1160.0 1365.0 1560.0"
+    # ["SM75_RTX2060_S"]="1620.0 1905.0 2200.0"
 )
 
 # Declare an associative array to map GPUs to their memory clock frequencies
