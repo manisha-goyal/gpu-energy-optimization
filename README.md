@@ -43,12 +43,12 @@ If using a remote development environment (e.g., VS Code):
 
 ## Experiment Script
 
-The `experiment.sh` script is designed to run GPU energy optimization experiments using **Accel-Sim**, **AccelWattch**, and **GPGPU-Sim**. It automates the process of setting clock frequencies, running simulations, and collecting results.
+The `experiment.sh` script is designed to run GPU energy optimization experiments using **Accel-Sim**, **AccelWattch**, and **GPGPU-Sim**. It automates the process of setting clock frequencies, running simulations, collecting results, and managing trace paths specific to GPU architectures.
 
 ### Key Features
 
 1. **GPU Clock Frequency Configuration**:
-   - The `GPU_CLOCKS` associative array maps GPUs to their respective clock frequencies. Update this array to configure the experiment parameters.
+   - The `GPU_CLOCKS` associative array maps GPUs to their respective core clock frequencies. Update this array to configure the experiment parameters.
 
    Example:
    ```bash
@@ -59,14 +59,39 @@ The `experiment.sh` script is designed to run GPU energy optimization experiment
    )
    ```
 
-2. **Simulation Automation**:
-   - Updates GPU clock configurations dynamically in the `gpugpusim.config` file.
+2. **Memory Clock Configuration**:
+   - The `GPU_MEMORY_CLOCKS` associative array maps GPUs to their corresponding memory clock frequencies.
+
+   Example:
+   ```bash
+   declare -A GPU_MEMORY_CLOCKS
+   GPU_MEMORY_CLOCKS=(
+       ["SM7_QV100"]="877.0"
+       ["SM7_TITANV"]="877.0"
+   )
+   ```
+
+3. **Trace Path Selection**:
+   - The script dynamically determines the appropriate trace path for the GPU architecture using the `get_trace_path` function. Supported trace paths include:
+     - Pascal: `accelwattch_pascal_traces`
+     - Volta: `accelwattch_volta_traces`
+     - Turing: `accelwattch_turing_traces`
+
+   Example for determining the trace path:
+   ```bash
+   TRACE_PATH=$(get_trace_path "SM7_QV100")
+   ```
+
+4. **Simulation Automation**:
+   - Updates GPU core and memory clock configurations dynamically in the `gpugpusim.config` file.
    - Runs simulations using specified benchmarks.
    - Monitors simulation progress and retrieves performance statistics.
 
-3. **Results Collection**:
+5. **Results Collection**:
    - Collects results into a structured directory under `./experiment-results`.
    - Saves timing logs for each simulation.
+
+---
 
 ### Running the Script
 
@@ -80,20 +105,38 @@ The `experiment.sh` script is designed to run GPU energy optimization experiment
    ./experiment.sh
    ```
 
+---
+
 ### Configuring the Experiment
 
 Before running the script:
-1. **Update the `GPU_CLOCKS` array**:
-   - Specify the GPUs and their corresponding clock frequencies for your experiments.
 
-2. **Set the Memory Clock Frequency**:
-   - Modify the `MEMORY_CLOCK` variable in the script to configure the memory clock (default is `850.0 MHz`):
-     ```bash
-     MEMORY_CLOCK=850.0
-     ```
+1. **Update the `GPU_CLOCKS` and `GPU_MEMORY_CLOCKS` Arrays**:
+   - Specify the GPUs and their corresponding core and memory clock frequencies for your experiments.
 
-3. **Verify Configurations**:
+   Example:
+   ```bash
+   declare -A GPU_CLOCKS
+   GPU_CLOCKS=(
+       ["SM7_QV100"]="1132.0 1832.0"
+   )
+
+   declare -A GPU_MEMORY_CLOCKS
+   GPU_MEMORY_CLOCKS=(
+       ["SM7_QV100"]="850.0"
+   )
+   ```
+
+2. **Verify Configurations**:
    - Ensure the `gpugpusim.config` files exist under `./gpu-simulator/gpgpu-sim/configs/tested-cfgs` for each GPU listed in the `GPU_CLOCKS` array.
+
+3. **Check Trace Paths**:
+   - Ensure the trace directories are unzipped and available under `/root/accelwattch_traces/`:
+     - Pascal traces: `/root/accelwattch_traces/accelwattch_pascal_traces/11.0/`
+     - Volta traces: `/root/accelwattch_traces/accelwattch_volta_traces/11.0/`
+     - Turing traces: `/root/accelwattch_traces/accelwattch_turing_traces/11.0/`
+
+---
 
 ### Experiment Results
 
@@ -110,3 +153,5 @@ Before running the script:
   ```
 
 - Timing logs are appended to `./experiment-results/timing.log`.
+
+---
