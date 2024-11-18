@@ -86,16 +86,16 @@ if [ $? -ne 0 ]; then
     log_message "Failed to unzip Pascal traces."
 fi
 
-log_message "Unzipping Turing traces..."
-tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_turing_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
-if [ $? -ne 0 ]; then
-    log_message "Failed to unzip Turing traces."
-fi
-
 log_message "Unzipping Volta traces..."
 tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_volta_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
 if [ $? -ne 0 ]; then
     log_message "Failed to unzip Volta traces."
+fi
+
+log_message "Unzipping Turing traces..."
+tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_turing_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
+if [ $? -ne 0 ]; then
+    log_message "Failed to unzip Turing traces."
 fi
 
 log_message "Setup completed successfully!"

@@ -30,7 +30,7 @@ COPY configs/define-all-apps.yml /root/accel-sim-framework/util/job_launching/ap
 COPY configs/define-standard-cfgs.yml /root/accel-sim-framework/util/job_launching/configs/define-standard-cfgs.yml
 
 # Define working directory
-WORKDIR /workspace
+WORKDIR /root/accel-sim-framework
 
 # Define entrypoint
 CMD ["/bin/bash"]
