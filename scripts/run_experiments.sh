@@ -134,7 +134,7 @@ for GPU_NAME in "${!GPU_CLOCKS[@]}"; do
         # Log the elapsed time in the timing log
         echo "Simulation for ${SIM_NAME} completed in ${ELAPSED_TIME} seconds." >> "$TIME_LOG_FILE"
 
-        echo "Simulation for ${GPU_NAME} at ${CORE_CLOCK} MHz completed. Results saved to ${GPU_RESULTS_DIR}/${STATS_FILE}"
+        echo "Simulation for ${GPU_NAME} at ${CORE_CLOCK} MHz completed in ${ELAPSED_TIME} seconds. Results saved to ${GPU_RESULTS_DIR}/${STATS_FILE}"
         echo "-------------------------------------------------------------"
     done
 done
