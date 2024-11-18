@@ -79,28 +79,23 @@ if [ $? -ne 0 ]; then
     log_message "Failed to build benchmark data."
 fi
 
-# Download and install the CUDA 11 toolkit
-log_message "Downloading and installing the CUDA 11 toolkit..."
-mkdir -p /tmp/cuda-install
-cd /tmp/cuda-install
-wget http://developer.download.nvidia.com/compute/cuda/11.0.1/local_installers/cuda_11.0.1_450.36.06_linux.run
-if [ $? -ne 0 ]; then
-    log_message "Failed to download CUDA 11 installer."
-fi
-
-# Ensure the installer has executable permissions
-chmod +x cuda_11.0.1_450.36.06_linux.run
-
-# Run the installer
-bash cuda_11.0.1_450.36.06_linux.run --toolkit --silent --toolkitpath=$HOME/cuda
-if [ $? -ne 0 ]; then
-    log_message "Failed to install CUDA 11 toolkit."
-fi
-
-cd ~/accel-sim-framework/
-
+# Unzipping trace files
+log_message "Unzipping Pascal traces..."
 tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_pascal_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
+if [ $? -ne 0 ]; then
+    log_message "Failed to unzip Pascal traces."
+fi
+
+log_message "Unzipping Turing traces..."
 tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_turing_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
+if [ $? -ne 0 ]; then
+    log_message "Failed to unzip Turing traces."
+fi
+
+log_message "Unzipping Volta traces..."
 tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_volta_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
+if [ $? -ne 0 ]; then
+    log_message "Failed to unzip Volta traces."
+fi
 
 log_message "Setup completed successfully!"

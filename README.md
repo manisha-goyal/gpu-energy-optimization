@@ -2,8 +2,6 @@
 
 This project focuses on optimizing GPU energy consumption using **Accel-Sim**, **AccelWattch**, and **GPGPU-Sim**. It explores strategies such as clock frequency adjustments and **Dynamic Voltage and Frequency Scaling (DVFS)** policies to reduce energy usage in computation, memory, and shared memory-intensive programs. The goal is to maintain performance while contributing to sustainable and efficient GPU operations.
 
----
-
 ## Docker Setup
 
 ### Build Docker Image
@@ -18,13 +16,11 @@ Run the container interactively:
 docker run -it ubuntu-gcc-cuda
 ```
 
-### Open Docker Container (Optional)
+### Open Docker Container
 If using a remote development environment (e.g., VS Code):
 1. Press `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux).
 2. Select **Dev Containers: Attach to Running Container....**.
 3. Navigate to the default working directory: `/root`.
-
----
 
 ## Accel-Sim Setup
 
@@ -39,22 +35,44 @@ If using a remote development environment (e.g., VS Code):
    . ./environment_setup.sh
    ```
 
+3. Download and install to CUDA 11:
+   ```bash
+   mkdir -p /tmp/cuda-install
+
+   cd /tmp/cuda-install
+   
+   wget http://developer.download.nvidia.com/compute/cuda/11.0.1/local_installers/cuda_11.0.1_450.36.06_linux.run
+   
+   chmod +x cuda_11.0.1_450.36.06_linux.run
+   
+   bash cuda_11.0.1_450.36.06_linux.run --toolkit --silent --toolkitpath=$HOME/cuda
+   
+   cd ~/accel-sim-framework/
+   ```
+
 ### Verify Setup
-1. **Check Environment Variables**:
+
+1. **Check Logs for Errors**:
+   Review the `environment_setup_log.txt` file to ensure no errors occurred during the setup:
+   ```bash
+   cat environment_setup_log.txt
+   ```
+   Look for any failure messages and address them before proceeding.
+   
+2. **Check Environment Variables**:
    ```bash
    echo $ACCELSIM_ROOT
    echo $ACCELSIM_CONFIG
    ```
    Ensure they are correctly set (e.g., `$ACCELSIM_ROOT` points to the Accel-Sim framework directory).
 
-2. **Check GPU Simulator Build**:
+3. **Check GPU Simulator Build**:
    ```bash
    ls ./gpu-simulator/bin/release
    ```
+   Confirm that the GPU simulator binaries are available in the release directory.
 
-If these checks pass, your setup is complete.
-
----
+If all these checks pass, your setup is complete.
 
 ## Experiment Script
 
@@ -62,72 +80,20 @@ The `experiment.sh` script is designed to run GPU energy optimization experiment
 
 ### Key Features
 
-1. **GPU Clock Frequency Configuration**:
-   - The `GPU_CLOCKS` associative array maps GPUs to their respective core clock frequencies. Update this array to configure the experiment parameters.
-
-   Example:
-   ```bash
-   declare -A GPU_CLOCKS
-   GPU_CLOCKS=(
-       ["SM7_QV100"]="1132.0 1832.0"
-       ["SM7_TITANV"]="1200.0 1800.0"
-   )
-   ```
-
-2. **Memory Clock Configuration**:
-   - The `GPU_MEMORY_CLOCKS` associative array maps GPUs to their corresponding memory clock frequencies.
-
-   Example:
-   ```bash
-   declare -A GPU_MEMORY_CLOCKS
-   GPU_MEMORY_CLOCKS=(
-       ["SM7_QV100"]="877.0"
-       ["SM7_TITANV"]="877.0"
-   )
-   ```
-
-3. **Trace Path Selection**:
-   - The script dynamically determines the appropriate trace path for the GPU architecture using the `get_trace_path` function. Supported trace paths include:
-     - Pascal: `accelwattch_pascal_traces`
-     - Volta: `accelwattch_volta_traces`
-     - Turing: `accelwattch_turing_traces`
-
-   Example for determining the trace path:
-   ```bash
-   TRACE_PATH=$(get_trace_path "SM7_QV100")
-   ```
-
-4. **Simulation Automation**:
-   - Updates GPU core and memory clock configurations dynamically in the `gpugpusim.config` file.
-   - Runs simulations using specified benchmarks.
+1. **Simulation Automation**:
+   - Runs simulations using specified benchmarks and GPU core clock configurations.
    - Monitors simulation progress and retrieves performance statistics.
 
-5. **Results Collection**:
+2. **Results Collection**:
    - Collects results into a structured directory under `./experiment-results`.
    - Saves timing logs for each simulation.
-
----
-
-### Running the Script
-
-1. Navigate to the Accel-Sim framework directory:
-   ```bash
-   cd accel-sim-framework
-   ```
-
-2. Run the experiment script:
-   ```bash
-   ./experiment.sh
-   ```
-
----
 
 ### Configuring the Experiment
 
 Before running the script:
 
 1. **Update the `GPU_CLOCKS` Array**:
-   - Specify the GPUs and their corresponding core clock frequencies for your experiments.
+   - Specify the core clock frequencies for your experiments.
 
    Example:
    ```bash
@@ -141,7 +107,7 @@ Before running the script:
    ```
 
 2. **Add Clock Parameters**:
-   - Update the `/root/accel-sim-framework/util/job_launching/configs/define-standard-cfgs.yml` file to include clock parameters for your experiments. Use the following format:
+   - Update the `/root/accel-sim-framework/util/job_launching/configs/define-standard-cfgs.yml` file to include clock parameters for your experiments if different from the default. Use the following format:
      ```yaml
      Pascal_1200.0MHZ:
          extra_params: "-gpgpu_clock_domains 1200.0:1200.0:1200.0:2500.0"
@@ -155,7 +121,17 @@ Before running the script:
      - Volta traces: `/root/accel-sim-framework/accelwattch_traces/accelwattch_volta_traces/11.0/`
      - Turing traces: `/root/accel-sim-framework/accelwattch_traces/accelwattch_turing_traces/11.0/`
 
----
+### Running the Script
+
+1. Navigate to the Accel-Sim framework directory:
+   ```bash
+   cd accel-sim-framework
+   ```
+
+2. Run the experiment script:
+   ```bash
+   ./experiment.sh
+   ```
 
 ### Experiment Results
 
