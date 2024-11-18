@@ -57,7 +57,19 @@ update_clock_frequency() {
     local core_freq=$2
     local mem_freq=$3
     echo "Updating second clock domains in $config_file to ${core_freq}:${core_freq}:${core_freq}:${mem_freq}..."
-    sed -i '0,/^.*-gpgpu_clock_domains .*/{n;s/^.*-gpgpu_clock_domains .*/-gpgpu_clock_domains '"${core_freq}:${core_freq}:${core_freq}:${mem_freq}"'/}' "$config_file"
+    
+    # Safeguard: Ensure the target line exists in the file
+    if ! grep -q "^-gpgpu_clock_domains" "$config_file"; then
+        echo "Error: -gpgpu_clock_domains line not found in $config_file"
+        return 1
+    fi
+
+    # Update the clock domain line
+    sed -i '/^-gpgpu_clock_domains/ s/.*/-gpgpu_clock_domains '"${core_freq}:${core_freq}:${core_freq}:${mem_freq}"'/' "$config_file"
+
+    # Print the updated line for verification
+    echo "Updated line in $config_file:"
+    grep "gpgpu_clock_domains" "$config_file"
 }
 
 # Function to copy simulation results for a given GPU and clock frequency
