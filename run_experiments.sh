@@ -44,9 +44,9 @@ get_short_gpu_name() {
 get_trace_path() {
     local gpu_name=$1
     case "$gpu_name" in
-        SM6_*) echo "/root/accelwattch_traces/accelwattch_pascal_traces/11.0/" ;;
-        SM7_*) echo "/root/accelwattch_traces/accelwattch_volta_traces/11.0/" ;;
-        SM75_*) echo "/root/accelwattch_traces/accelwattch_turing_traces/11.0/" ;;
+        SM6_*) echo "accelwattch_traces/accelwattch_pascal_traces/11.0" ;;
+        SM7_*) echo "accelwattch_traces/accelwattch_volta_traces/11.0" ;;
+        SM75_*) echo "accelwattch_traces/accelwattch_turing_traces/11.0" ;;
         *) echo "Unknown architecture for $gpu_name"; exit 1 ;;
     esac
 }
