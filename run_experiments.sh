@@ -5,7 +5,7 @@ declare -A GPU_CLOCKS
 GPU_CLOCKS=(
     # Pascal
     ["SM6_TITANX"]="1200.0 1417.0 1620.0"
-    Volta
+    # Volta
     ["SM7_GV100"]="1230.0 1447.0 1660.0"
     ["SM7_QV100"]="960.0 1132.0 1300.0"
     ["SM7_TITANV"]="1020.0 1200.0 1380.0"

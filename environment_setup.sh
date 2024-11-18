@@ -92,9 +92,15 @@ fi
 chmod +x cuda_11.0.1_450.36.06_linux.run
 
 # Run the installer
-. cuda_11.0.1_450.36.06_linux.run --silent --toolkit --toolkitpath=$HOME/cuda
+bash cuda_11.0.1_450.36.06_linux.run --toolkit --silent --toolkitpath=$HOME/cuda
 if [ $? -ne 0 ]; then
     log_message "Failed to install CUDA 11 toolkit."
 fi
+
+cd ~/accel-sim-framework/
+
+tar -xvzf /root/accelwattch_traces/accelwattch_pascal_traces.tgz -C /root/accelwattch_traces
+tar -xvzf /root/accelwattch_traces/accelwattch_turing_traces.tgz -C /root/accelwattch_traces
+tar -xvzf /root/accelwattch_traces/accelwattch_volta_traces.tgz -C /root/accelwattch_traces
 
 log_message "Setup completed successfully!"

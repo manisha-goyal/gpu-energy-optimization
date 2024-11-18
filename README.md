@@ -39,6 +39,21 @@ If using a remote development environment (e.g., VS Code):
    . ./environment_setup.sh
    ```
 
+### Verify Setup
+1. **Check Environment Variables**:
+   ```bash
+   echo $ACCELSIM_ROOT
+   echo $ACCELSIM_CONFIG
+   ```
+   Ensure they are correctly set (e.g., `$ACCELSIM_ROOT` points to the Accel-Sim framework directory).
+
+2. **Check GPU Simulator Build**:
+   ```bash
+   ls ./gpu-simulator/bin/release
+   ```
+
+If these checks pass, your setup is complete.
+
 ---
 
 ## Experiment Script
@@ -136,9 +151,9 @@ Before running the script:
      - Volta traces: `/root/accelwattch_traces/accelwattch_volta_traces/11.0/`
      - Turing traces: `/root/accelwattch_traces/accelwattch_turing_traces/11.0/`
    ```bash
-   tar -xvzf accelwattch_traces/accelwattch_pascal_traces.tgz -C /root/accelwattch_traces
-   tar -xvzf accelwattch_traces/accelwattch_turing_traces.tgz -C /root/accelwattch_traces
-   tar -xvzf accelwattch_traces/accelwattch_volta_traces.tgz -C /root/accelwattch_traces
+   tar -xvzf /root/accelwattch_traces/accelwattch_pascal_traces.tgz -C /root/accelwattch_traces
+   tar -xvzf /root/accelwattch_traces/accelwattch_turing_traces.tgz -C /root/accelwattch_traces
+   tar -xvzf /root/accelwattch_traces/accelwattch_volta_traces.tgz -C /root/accelwattch_traces
    ```
 ---
 

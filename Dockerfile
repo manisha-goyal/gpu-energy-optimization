@@ -24,7 +24,10 @@ RUN mv /tmp/environment_setup.sh /root/accel-sim-framework/environment_setup.sh 
     chmod +x /root/accel-sim-framework/environment_setup.sh
 
 # Copy the AccelWattch traces into the container
-COPY accelwattch_traces /root/accelwattch_traces
+COPY accelwattch_traces /root/accel-sim-framework/accelwattch_traces
+
+# Copy the AccelWattch traces into the container
+COPY define-all-apps.yml /root/accel-sim-framework/util/job_launching/apps/define-all-apps.yml
 
 # Define working directory
 WORKDIR /workspace
