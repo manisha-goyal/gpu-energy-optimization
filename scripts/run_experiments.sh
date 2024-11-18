@@ -4,9 +4,9 @@
 declare -A GPU_CLOCKS
 GPU_CLOCKS=(
     # Pascal
-    ["SM6_TITANX"]="1800.0" #1417.0 1620.0"
+    ["SM6_TITANX"]="1200.0 1417.0 1620.0 1800.0"
     # Volta
-    # ["SM7_QV100"]="960.0 1132.0 1300.0"
+    ["SM7_QV100"]="960.0 1132.0 1455.0 1600.0"
 )
 
 # Function to extract short GPU name (e.g., QV100) from the full GPU name (e.g., SM7_QV100)
@@ -47,7 +47,7 @@ copy_simulation_results() {
         algo_name=$(basename "$(dirname "$parent_dir")")/$(basename "$parent_dir") # Construct relative path for algo_name
 
         echo "Copying results for ${algo_name}, GPU: ${sim_name}..."
-        dest_dir="${results_dir}/${sim_name}/${algo_name}" # Destination directory
+        dest_dir="${results_dir}/${sim_name}/${algo_name}/${short_gpu_name}-Accelwattch_SASS_SIM" # Destination directory
         mkdir -p "$dest_dir" # Ensure destination directory exists
 
         # Copy all files from the GPU-specific directory to the destination directory
@@ -84,8 +84,6 @@ for GPU_NAME in "${!GPU_CLOCKS[@]}"; do
     CLOCK_FREQUENCIES=(${GPU_CLOCKS[$GPU_NAME]})
     ARCHITECTURE=$(get_architecture "$GPU_NAME")
     TRACE_PATH=$(get_trace_path "$GPU_NAME")
-
-    echo "Trace file path: ${TRACE_PATH}"
 
     # Loop through each core clock frequency for the current GPU
     for CORE_CLOCK in "${CLOCK_FREQUENCIES[@]}"; do
