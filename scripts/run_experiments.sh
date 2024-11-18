@@ -4,9 +4,9 @@
 declare -A GPU_CLOCKS
 GPU_CLOCKS=(
     # Pascal
-    ["SM6_TITANX"]="1200.0 1417.0 1620.0 1800.0"
+    ["SM6_TITANX"]="1800.0" #1417.0 1620.0"
     # Volta
-    ["SM7_QV100"]="960.0 1132.0 1455.0 1600.0"
+    # ["SM7_QV100"]="960.0 1132.0 1300.0"
 )
 
 # Function to extract short GPU name (e.g., QV100) from the full GPU name (e.g., SM7_QV100)
@@ -30,8 +30,9 @@ copy_simulation_results() {
     local sim_name=$1    # e.g., "SM7_QV100-1132.0"
     local short_gpu_name=$2    # e.g., "QV100"
     local results_dir=$3 # Base results directory, e.g., "./experiment-results"
+    local config_name=$4 # e.g., Pascal_1800.0MHZ
 
-    local sim_run_dir="./sim_run_10.1" # Simulation run directory
+    local sim_run_dir="./sim_run_11.0" # Simulation run directory
 
     # Check if the simulation run directory exists
     if [ ! -d "$sim_run_dir" ]; then
@@ -40,8 +41,8 @@ copy_simulation_results() {
     fi
 
     # Iterate over all algorithms in the sim_run directory
-    find "$sim_run_dir" -type d -name "${short_gpu_name}-Accelwattch_PTX_SIM" | while read -r gpu_dir; do
-        # Example: ./sim_run_10.1/backprop-rodinia-2.0-ft/.../QV100-Accelwattch_PTX_SIM
+    find "$sim_run_dir" -type d -name "${short_gpu_name}-Accelwattch_SASS_SIM-${config_name}" | while read -r gpu_dir; do
+        # Example: ./sim_run_11.0/backprop-rodinia-2.0-ft/.../QV100-Accelwattch_PTX_SIM-Pascal_1800.0MHZ
         parent_dir=$(dirname "$gpu_dir") # Parent directory of the GPU-specific folder
         algo_name=$(basename "$(dirname "$parent_dir")")/$(basename "$parent_dir") # Construct relative path for algo_name
 
@@ -100,6 +101,8 @@ for GPU_NAME in "${!GPU_CLOCKS[@]}"; do
         # Record the start time
         START_TIME=$(date +%s)
 
+        echo "Running simulation with params: -C ${SHORT_GPU_NAME}-Accelwattch_SASS_SIM-${CONFIG_NAME} -T ${TRACE_PATH} -N ${SIM_NAME}"
+
         # Run the simulation with appended parameters
         ./util/job_launching/run_simulations.py -B rodinia-3.1 \
             -C "${SHORT_GPU_NAME}-Accelwattch_SASS_SIM-${CONFIG_NAME}" \
@@ -120,7 +123,7 @@ for GPU_NAME in "${!GPU_CLOCKS[@]}"; do
         ELAPSED_TIME=$((END_TIME - START_TIME))
 
         # After the simulation completes, copy results
-        copy_simulation_results "$SIM_NAME" "$SHORT_GPU_NAME" "$RESULTS_DIR"
+        copy_simulation_results "$SIM_NAME" "$SHORT_GPU_NAME" "$RESULTS_DIR" "$CONFIG_NAME"
 
         # Collect the simulation statistics
         STATS_FILE="${SIM_NAME}.csv"

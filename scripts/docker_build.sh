@@ -3,7 +3,7 @@
 # Update and install required dependencies
 apt update
 apt --assume-yes install gcc-5 g++-5 make xutils-dev bison zlib1g-dev flex libglu1-mesa-dev \
-    libxi-dev libxmu-dev freeglut3-dev wget git python3 python3-pip
+    libxi-dev libxmu-dev freeglut3-dev wget git python3 python3-pip htop
 
 # Set non-interactive mode
 export DEBIAN_FRONTEND=noninteractive
