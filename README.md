@@ -183,3 +183,20 @@ The `experiment.sh` script is designed to run GPU energy optimization experiment
 
 - **Verify Aggregation Output**:
    - Ensure the aggregated files include key statistics such as `gpu_avg_TOT_INST`, `gpu_tot_avg_power`, and `gpu_avg_IDLE_COREP`.
+
+### Additional Steps for Result Aggregation
+
+To further process and analyze the results from your experiments, follow these additional steps:
+
+### Step 1: Navigate to the Aggregate Directory
+1. Change your working directory to the `aggregate` directory under the `accel-sim-framework`:
+   ```bash
+   cd accel-sim-framework/aggregate```
+
+### Step 2: Copy CSV Files for the Chip
+Copy all the CSV files corresponding to a particular chip (eg. output_SM6_TITANX-1200.0.csv) into the `aggregate` directory. Ensure the files are organized and named appropriately for ease of identification.
+
+### Step 3: Run the Aggregation Script
+Execute the aggregation script to combine the results:
+```bash
+python3 aggregate-script.py```

@@ -35,6 +35,12 @@ RUN mkdir -p /root/accel-sim-framework/experiment-results
 # Copy the script to aggregate results into the experiment-results directory
 COPY experiment-results/data-script.py /root/accel-sim-framework/experiment-results/data-script.py
 
+# Create the aggregate directory inside the container
+RUN mkdir -p /root/accel-sim-framework/aggregate
+
+# Copy the aggregate script into the aggregate directory
+COPY aggregate/aggregate-script.py /root/accel-sim-framework/aggregate/aggregate-script.py
+
 # Define working directory
 WORKDIR /root/accel-sim-framework
 
