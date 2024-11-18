@@ -147,13 +147,13 @@ Before running the script:
 
 3. **Check Trace Paths**:
    - Ensure the trace directories are unzipped and available under `/root/accelwattch_traces/`:
-     - Pascal traces: `/root/accelwattch_traces/accelwattch_pascal_traces/11.0/`
-     - Volta traces: `/root/accelwattch_traces/accelwattch_volta_traces/11.0/`
-     - Turing traces: `/root/accelwattch_traces/accelwattch_turing_traces/11.0/`
+     - Pascal traces: `/root/accel-sim-framework/accelwattch_traces/accelwattch_pascal_traces/11.0/`
+     - Volta traces: `/root/accel-sim-framework/accelwattch_traces/accelwattch_volta_traces/11.0/`
+     - Turing traces: `/root/accel-sim-framework/accelwattch_traces/accelwattch_turing_traces/11.0/`
    ```bash
-   tar -xvzf /root/accelwattch_traces/accelwattch_pascal_traces.tgz -C /root/accelwattch_traces
-   tar -xvzf /root/accelwattch_traces/accelwattch_turing_traces.tgz -C /root/accelwattch_traces
-   tar -xvzf /root/accelwattch_traces/accelwattch_volta_traces.tgz -C /root/accelwattch_traces
+   tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_pascal_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
+   tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_turing_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
+   tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_volta_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
    ```
 ---
 

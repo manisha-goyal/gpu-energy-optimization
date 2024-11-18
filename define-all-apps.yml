@@ -13,7 +13,7 @@ rodinia-3.1:
     exec_dir: "$GPUAPPS_ROOT/bin/$CUDA_VERSION/release/"
     data_dirs: "$GPUAPPS_ROOT/data_dirs/cuda/rodinia/3.1/"
     execs:
-    #Memory-bound
+    # Memory-bound
         - nn-rodinia-3.1:
             - args:  ./data/filelist_4 -r 5 -lat 30 -lng 90
               accel-sim-mem: 4G
@@ -23,7 +23,7 @@ rodinia-3.1:
         - bfs-rodinia-3.1:
             - args:  ./data/graph1MW_6.txt
               accel-sim-mem: 1G
-      #Compute
+    # Compute
         - gaussian-rodinia-3.1:
             - args:  -f ./data/matrix208.txt
               accel-sim-mem: 1G
@@ -33,7 +33,7 @@ rodinia-3.1:
         - backprop-rodinia-3.1:
             - args:  65536
               accel-sim-mem: 1G
-      #Both
+    # Both
         - particlefilter_naive-rodinia-3.1:
             - args:  -x 128 -y 128 -z 10 -np 1000
               accel-sim-mem: 1G
