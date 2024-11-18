@@ -3,7 +3,7 @@ import csv
 import numpy as np
 import pandas as pd
 
-def check_accelwattch_logs(dataframe, subdirectory_path, chip):
+def check_accelwattch_logs(dataframe, subdirectory_path, chip, freq):
     """
 
     Parameters:
@@ -27,9 +27,14 @@ def check_accelwattch_logs(dataframe, subdirectory_path, chip):
 
     for application in dataframe['Application']:
         # Construct the path to check
-        log_path = os.path.join(subdirectory_path, application, f"{chip}-Accelwattch_SASS_SIM", "accelwattch_power_report.log")
-       
+        path1 = os.path.join(subdirectory_path, application, f"{chip}-Accelwattch_SASS_SIM", "accelwattch_power_report.log")
+        path2 = os.path.join(subdirectory_path, application, f"{chip}-Accelwattch_SASS_SIM-{freq}MHZ", "accelwattch_power_report.log")
         # Check if the log file exists
+
+        if os.path.exists(path1):
+            log_path = path1
+        elif os.path.exists(path2):
+            log_path = path2
         
         if os.path.exists(log_path):
             #print(log_path)
@@ -144,6 +149,7 @@ def process_experiment_results(base_directory):
     # Loop through each subdirectory in the base directory
     for subdirectory in os.listdir(base_directory):
         chip = subdirectory.split("_")[1].split("-")[0]
+        freq = subdirectory.split("_")[1].split("-")[1].split(".")[0]
         subdirectory_path = os.path.join(base_directory, subdirectory)
         #print(chip)
         # Check if it's a directory
@@ -169,7 +175,7 @@ def process_experiment_results(base_directory):
                 applications = dataframe['Application']
                 #dataframe.to_csv(f"{subdirectory_path}/output_{subdirectory}.csv", index=False)
                 #print(applications)
-                df = check_accelwattch_logs(applications.to_frame(), subdirectory_path, chip)
+                df = check_accelwattch_logs(applications.to_frame(), subdirectory_path, chip, freq)
                 result_df = dataframe.merge(df, on="Application", how="left")
                 #print(result_df)
                 result_df.to_csv(f"{subdirectory_path}/output_{subdirectory}.csv", index=False)
