@@ -29,6 +29,12 @@ COPY accelwattch_traces /root/accel-sim-framework/accelwattch_traces
 COPY configs/define-all-apps.yml /root/accel-sim-framework/util/job_launching/apps/define-all-apps.yml
 COPY configs/define-standard-cfgs.yml /root/accel-sim-framework/util/job_launching/configs/define-standard-cfgs.yml
 
+# Create the experiment-results directory inside the container
+RUN mkdir -p /root/accel-sim-framework/experiment-results
+
+# Copy the script to aggregate results into the experiment-results directory
+COPY experiment-results/data-script.py /root/accel-sim-framework/experiment-results/data-script.py
+
 # Define working directory
 WORKDIR /root/accel-sim-framework
 

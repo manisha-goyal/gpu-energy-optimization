@@ -4,19 +4,28 @@ This project focuses on optimizing GPU energy consumption using **Accel-Sim**, *
 
 ## Docker Setup
 
-### Build Docker Image
+### Step 1: Download AccelWattch Trace Files
+1. Download the AccelWattch trace files from the following link:
+   [AccelWattch Trace Files - Google Drive](https://drive.google.com/drive/folders/1gliQrEQhz9ws9UGhHsjdXHZ1Mp2vw8Fj?usp=sharing)
+
+2. Place the downloaded files in the following directory relative to your project root:
+   ```
+   ./accelwattch_traces
+   ```
+
+### Step 2: Build Docker Image
 Build the Docker image:
 ```bash
 docker build --platform linux/amd64 -t ubuntu-gcc-cuda .
 ```
 
-### Run Docker Container
+### Step 3: Run Docker Container
 Run the container interactively:
 ```bash
 docker run -it ubuntu-gcc-cuda
 ```
 
-### Open Docker Container
+### Step 4: Open Docker Container
 If using a remote development environment (e.g., VS Code):
 1. Press `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux).
 2. Select **Dev Containers: Attach to Running Container....**.
@@ -24,7 +33,7 @@ If using a remote development environment (e.g., VS Code):
 
 ## Accel-Sim Setup
 
-### Setup Environment
+### Step 1: Setup Environment
 1. Navigate to the Accel-Sim framework directory:
    ```bash
    cd accel-sim-framework
@@ -49,8 +58,9 @@ If using a remote development environment (e.g., VS Code):
    
    cd ~/accel-sim-framework/
    ```
+   If the installation fails the first time, run the shell script again (second last step above).
 
-### Verify Setup
+### Step 2: Verify Setup
 
 1. **Check Logs for Errors**:
    Review the `environment_setup_log.txt` file to ensure no errors occurred during the setup:
