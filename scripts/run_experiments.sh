@@ -7,6 +7,8 @@ GPU_CLOCKS=(
     ["SM6_TITANX"]="1200.0 1417.0 1620.0 1800.0"
     # Volta
     ["SM7_QV100"]="960.0 1132.0 1455.0 1600.0"
+    # Turing
+    ["SM75_RTX2060_S"]="1160.0 1365.0 1560.0 2000.0"
 )
 
 # Function to extract short GPU name (e.g., QV100) from the full GPU name (e.g., SM7_QV100)
@@ -21,6 +23,7 @@ get_trace_path() {
     case "$gpu_name" in
         SM6_*) echo "accelwattch_traces/accelwattch_pascal_traces/11.0" ;;
         SM7_*) echo "accelwattch_traces/accelwattch_volta_traces/11.0" ;;
+        SM75_*) echo "accelwattch_traces/accelwattch_turing_traces/11.0" ;;
         *) echo "Unknown architecture for $gpu_name"; exit 1 ;;
     esac
 }
@@ -61,6 +64,7 @@ get_architecture() {
     case "$gpu_name" in
         SM6_*) echo "Pascal" ;;
         SM7_*) echo "Volta" ;;
+        SM75_*) echo "Turing" ;;
         *) echo "Unknown"; exit 1 ;;
     esac
 }

@@ -103,6 +103,8 @@ Before running the script:
       ["SM6_TITANX"]="1200.0 1417.0 1620.0 1800.0"
       # Volta
       ["SM7_QV100"]="960.0 1132.0 1455.0 1600.0"
+      # Turing
+      ["SM75_RTX2060_S"]="1160.0 1365.0 1560.0 2000.0"
    )
    ```
 
@@ -113,6 +115,8 @@ Before running the script:
          extra_params: "-gpgpu_clock_domains 1200.0:1200.0:1200.0:2500.0"
      Volta_960.0MHZ:
          extra_params: "-gpgpu_clock_domains 960.0:960.0:960.0:877.0"
+     Turing_1160.0MHZ:
+         extra_params: "-gpgpu_clock_domains 1160.0:1160.0:1160.0:3500.0"
      ```
 
 3. **Check Trace Paths**:

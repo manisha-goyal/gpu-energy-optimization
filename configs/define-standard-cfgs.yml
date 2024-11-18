@@ -210,3 +210,15 @@ Volta_1455.0MHZ:
 
 Volta_1600.0MHZ:
     extra_params: "-gpgpu_clock_domains 1600.0:1600.0:1600.0:877.0"
+
+Turing_1160.0MHZ:
+    extra_params: "-gpgpu_clock_domains 1160.0:1160.0:1160.0:3500.0"
+
+Turing_1365.0MHZ:
+    extra_params: "-gpgpu_clock_domains 1365.0:1365.0:1365.0:3500.0"
+
+Turing_1560.0MHZ:
+    extra_params: "-gpgpu_clock_domains 1560.0:1560.0:1560.0:3500.0"
+
+Turing_2000.0MHZ:
+    extra_params: "-gpgpu_clock_domains 2000.0:2000.0:2000.0:3500.0"
