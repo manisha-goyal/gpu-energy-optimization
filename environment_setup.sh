@@ -99,8 +99,8 @@ fi
 
 cd ~/accel-sim-framework/
 
-tar -xvzf /root/accelwattch_traces/accelwattch_pascal_traces.tgz -C /root/accelwattch_traces
-tar -xvzf /root/accelwattch_traces/accelwattch_turing_traces.tgz -C /root/accelwattch_traces
-tar -xvzf /root/accelwattch_traces/accelwattch_volta_traces.tgz -C /root/accelwattch_traces
+tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_pascal_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
+tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_turing_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
+tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_volta_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
 
 log_message "Setup completed successfully!"
