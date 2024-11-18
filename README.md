@@ -45,7 +45,7 @@ If using a remote development environment (e.g., VS Code):
    
    chmod +x cuda_11.0.1_450.36.06_linux.run
    
-   bash cuda_11.0.1_450.36.06_linux.run --toolkit --silent --toolkitpath=$HOME/cuda
+   sh cuda_11.0.1_450.36.06_linux.run --toolkit --silent --toolkitpath=$HOME/cuda
    
    cd ~/accel-sim-framework/
    ```
