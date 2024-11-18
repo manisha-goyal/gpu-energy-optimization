@@ -91,35 +91,34 @@ The `experiment.sh` script is designed to run GPU energy optimization experiment
 ### Key Features
 
 1. **Simulation Automation**:
-   - Runs simulations using specified benchmarks and GPU core clock configurations.
+   - Executes simulations using specified benchmarks and GPU core clock configurations.
    - Monitors simulation progress and retrieves performance statistics.
 
 2. **Results Collection**:
-   - Collects results into a structured directory under `./experiment-results`.
-   - Saves timing logs for each simulation.
+   - Collects and organizes results into a structured directory under `./experiment-results`.
+   - Saves timing logs for each simulation run.
+
+3. **Results Aggregation**:
+   - Aggregates experiment results into consolidated output files using the Python script `data-script.py`.
 
 ### Configuring the Experiment
 
-Before running the script:
-
 1. **Update the `GPU_CLOCKS` Array**:
-   - Specify the core clock frequencies for your experiments.
-
-   Example:
-   ```bash
-   declare -A GPU_CLOCKS
-   GPU_CLOCKS=(
-       # Pascal
-      ["SM6_TITANX"]="1200.0 1417.0 1620.0 1800.0"
-      # Volta
-      ["SM7_QV100"]="960.0 1132.0 1455.0 1600.0"
-      # Turing
-      ["SM75_RTX2060_S"]="1160.0 1365.0 1560.0 2000.0"
-   )
-   ```
+   - Define the GPUs and their core clock frequencies for the experiments:
+     ```bash
+     declare -A GPU_CLOCKS
+     GPU_CLOCKS=(
+         # Pascal
+        ["SM6_TITANX"]="1200.0 1417.0 1620.0 1800.0"
+        # Volta
+        ["SM7_QV100"]="960.0 1132.0 1455.0 1600.0"
+        # Turing
+        ["SM75_RTX2060_S"]="1160.0 1365.0 1560.0 2000.0"
+     )
+     ```
 
 2. **Add Clock Parameters**:
-   - Update the `/root/accel-sim-framework/util/job_launching/configs/define-standard-cfgs.yml` file to include clock parameters for your experiments if different from the default. Use the following format:
+   - Edit the `/root/accel-sim-framework/util/job_launching/configs/define-standard-cfgs.yml` file to include the clock parameters for your experiments:
      ```yaml
      Pascal_1200.0MHZ:
          extra_params: "-gpgpu_clock_domains 1200.0:1200.0:1200.0:2500.0"
@@ -130,26 +129,40 @@ Before running the script:
      ```
 
 3. **Check Trace Paths**:
-   - Ensure the trace directories are unzipped and available under `/root/accelwattch_traces/`:
+   - Verify that the trace directories are unzipped and available in `/root/accelwattch_traces/`:
      - Pascal traces: `/root/accel-sim-framework/accelwattch_traces/accelwattch_pascal_traces/11.0/`
      - Volta traces: `/root/accel-sim-framework/accelwattch_traces/accelwattch_volta_traces/11.0/`
      - Turing traces: `/root/accel-sim-framework/accelwattch_traces/accelwattch_turing_traces/11.0/`
 
-### Running the Script
+### Running the Experiment Script
 
-1. Navigate to the Accel-Sim framework directory:
+1. **Navigate to the Accel-Sim Framework Directory**:
    ```bash
    cd accel-sim-framework
    ```
 
-2. Run the experiment script:
+2. **Execute the Experiment Script**:
    ```bash
    ./experiment.sh
    ```
 
+### Aggregating Experiment Results
+
+1. **Prepare for Result Aggregation**:
+   - Ensure all simulation results are stored in the `experiment-results/` directory.
+
+2. **Run the Aggregation Script**:
+   - Use the Python script `data-script.py` to parse and aggregate results:
+     ```bash
+     python3 experiment-results/data-script.py
+     ```
+
+3. **Output of Aggregation**:
+   - The script consolidates results into output CSV files stored in their respective subdirectories within `experiment-results/`.
+
 ### Experiment Results
 
-- Results are stored in the `./experiment-results` directory in a structured format:
+- **File Structure**:
   ```
   experiment-results/
   ├── SM6_TITANX-1200.0/
@@ -160,8 +173,13 @@ Before running the script:
   │   │   ├── accelwattch_power_report.log
   │   │   └── ...
   │   └── SM6_TITANX-1200.0.csv
+  │   └── output_SM6_TITANX-1200.0.csv
   └── ...
   ```
 
-- Timing logs for the experiment are appended to `./experiment-results/timing.log`.
----
+- **Log Files**:
+  - Timing logs are appended to `./experiment-results/timing.log`.
+  - Aggregated results are saved as `output_<subdirectory>.csv`.
+
+- **Verify Aggregation Output**:
+   - Ensure the aggregated files include key statistics such as `gpu_avg_TOT_INST`, `gpu_tot_avg_power`, and `gpu_avg_IDLE_COREP`.
