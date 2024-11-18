@@ -126,35 +126,35 @@ The `experiment.sh` script is designed to run GPU energy optimization experiment
 
 Before running the script:
 
-1. **Update the `GPU_CLOCKS` and `GPU_MEMORY_CLOCKS` Arrays**:
-   - Specify the GPUs and their corresponding core and memory clock frequencies for your experiments.
+1. **Update the `GPU_CLOCKS` Array**:
+   - Specify the GPUs and their corresponding core clock frequencies for your experiments.
 
    Example:
    ```bash
    declare -A GPU_CLOCKS
    GPU_CLOCKS=(
-       ["SM7_QV100"]="1132.0 1832.0"
-   )
-
-   declare -A GPU_MEMORY_CLOCKS
-   GPU_MEMORY_CLOCKS=(
-       ["SM7_QV100"]="850.0"
+       # Pascal
+      ["SM6_TITANX"]="1200.0 1417.0 1620.0 1800.0"
+      # Volta
+      ["SM7_QV100"]="960.0 1132.0 1455.0 1600.0"
    )
    ```
 
-2. **Verify Configurations**:
-   - Ensure the `gpugpusim.config` files exist under `./gpu-simulator/gpgpu-sim/configs/tested-cfgs` for each GPU listed in the `GPU_CLOCKS` array.
+2. **Add Clock Parameters**:
+   - Update the `/root/accel-sim-framework/util/job_launching/configs/define-standard-cfgs.yml` file to include clock parameters for your experiments. Use the following format:
+     ```yaml
+     Pascal_1200.0MHZ:
+         extra_params: "-gpgpu_clock_domains 1200.0:1200.0:1200.0:2500.0"
+     Volta_960.0MHZ:
+         extra_params: "-gpgpu_clock_domains 960.0:960.0:960.0:877.0"
+     ```
 
 3. **Check Trace Paths**:
    - Ensure the trace directories are unzipped and available under `/root/accelwattch_traces/`:
      - Pascal traces: `/root/accel-sim-framework/accelwattch_traces/accelwattch_pascal_traces/11.0/`
      - Volta traces: `/root/accel-sim-framework/accelwattch_traces/accelwattch_volta_traces/11.0/`
      - Turing traces: `/root/accel-sim-framework/accelwattch_traces/accelwattch_turing_traces/11.0/`
-   ```bash
-   tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_pascal_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
-   tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_turing_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
-   tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_volta_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
-   ```
+
 ---
 
 ### Experiment Results
@@ -162,15 +162,16 @@ Before running the script:
 - Results are stored in the `./experiment-results` directory in a structured format:
   ```
   experiment-results/
-  ├── SM7_QV100-1132.0/
-  │   ├── backprop/
-  │   │   ├── QV100-Accelwattch_PTX_SIM/
-  │   │   ├── stats.csv
+  ├── SM6_TITANX-1200.0/
+  │   ├── backprop-rodinia-3.1/65536/TITANX-Accelwattch_SASS_SIM/
+  │   │   ├── accelwattch_power_report.log
   │   │   └── ...
-  │   └── timing.log
+  │   ├── b+tree-rodinia-3.1/65536/TITANX-Accelwattch_SASS_SIM/
+  │   │   ├── accelwattch_power_report.log
+  │   │   └── ...
+  │   └── SM6_TITANX-1200.0.csv
   └── ...
   ```
 
-- Timing logs are appended to `./experiment-results/timing.log`.
-
+- Timing logs for the experiment are appended to `./experiment-results/timing.log`.
 ---

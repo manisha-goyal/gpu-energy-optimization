@@ -26,8 +26,9 @@ RUN mv /tmp/environment_setup.sh /root/accel-sim-framework/environment_setup.sh 
 # Copy the AccelWattch traces into the container
 COPY accelwattch_traces /root/accel-sim-framework/accelwattch_traces
 
-# Copy the GPU Simulator Apps config file into the container
+# Copy the GPU Simulator Apps config files into the container
 COPY define-all-apps.yml /root/accel-sim-framework/util/job_launching/apps/define-all-apps.yml
+COPY define-standard-cfgs.yml /root/accel-sim-framework/util/job_launching/configs/define-standard-cfgs.yml
 
 # Define working directory
 WORKDIR /workspace
