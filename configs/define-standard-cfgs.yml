@@ -187,6 +187,9 @@ Accelwattch_PTX_SIM:
     \n-accelwattch_xml_file accelwattch_ptx_sim.xml"
 
 # Clock frequency tuning configs
+Pascal_1000.0MHZ:
+    extra_params: "-gpgpu_clock_domains 1000.0:1000.0:1000.0:2500.0"
+
 Pascal_1200.0MHZ:
     extra_params: "-gpgpu_clock_domains 1200.0:1200.0:1200.0:2500.0"
 
@@ -198,6 +201,9 @@ Pascal_1620.0MHZ:
 
 Pascal_1800.0MHZ:
     extra_params: "-gpgpu_clock_domains 1800.0:1800.0:1800.0:2500.0"
+
+Volta_760.0MHZ:
+    extra_params: "-gpgpu_clock_domains 760.0:760.0:760.0:877.0"
 
 Volta_960.0MHZ:
     extra_params: "-gpgpu_clock_domains 960.0:960.0:960.0:877.0"
@@ -217,8 +223,11 @@ Turing_1160.0MHZ:
 Turing_1365.0MHZ:
     extra_params: "-gpgpu_clock_domains 1365.0:1365.0:1365.0:3500.0"
 
-Turing_1560.0MHZ:
-    extra_params: "-gpgpu_clock_domains 1560.0:1560.0:1560.0:3500.0"
+Turing_1470.0MHZ:
+    extra_params: "-gpgpu_clock_domains 1470.0:1470.0:1470.0:3500.0"
 
-Turing_2000.0MHZ:
-    extra_params: "-gpgpu_clock_domains 2000.0:2000.0:2000.0:3500.0"
+Turing_1700.0MHZ:
+    extra_params: "-gpgpu_clock_domains 1700.0:1700.0:1700.0:3500.0"
+
+Turing_1960.0MHZ:
+    extra_params: "-gpgpu_clock_domains 1960.0:1960.0:1960.0:3500.0"

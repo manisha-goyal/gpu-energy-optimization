@@ -4,11 +4,11 @@
 declare -A GPU_CLOCKS
 GPU_CLOCKS=(
     # Pascal
-    ["SM6_TITANX"]="1200.0 1417.0 1620.0 1800.0"
+    ["SM6_TITANX"]="1000.0 1200.0 1417.0 1620.0 1800.0"
     # Volta
-    ["SM7_QV100"]="960.0 1132.0 1455.0 1600.0"
+    ["SM7_QV100"]="760.0 960.0 1132.0 1455.0 1600.0"
     # Turing
-    ["SM75_RTX2060_S"]="1160.0 1365.0 1560.0 2000.0"
+    ["SM75_RTX2060_S"]="1160.0 1365.0 1470.0 1700.0 1960.0"
 )
 
 # Function to extract short GPU name (e.g., QV100) from the full GPU name (e.g., SM7_QV100)
