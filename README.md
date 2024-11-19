@@ -2,34 +2,38 @@
 
 This project focuses on optimizing GPU energy consumption using **Accel-Sim**, **AccelWattch**, and **GPGPU-Sim**. It explores strategies such as clock frequency adjustments and **Dynamic Voltage and Frequency Scaling (DVFS)** policies to reduce energy usage in computation, memory, and shared memory-intensive programs. The goal is to maintain performance while contributing to sustainable and efficient GPU operations.
 
-## Docker Setup
+## Singularity Setup (Using docker image)
 
-### Step 1: Download AccelWattch Trace Files
-1. Download the AccelWattch trace files from the following link:
-   [AccelWattch Trace Files - Google Drive](https://drive.google.com/drive/folders/1gliQrEQhz9ws9UGhHsjdXHZ1Mp2vw8Fj?usp=sharing)
-
-2. Place the downloaded files in the following directory relative to your project root:
-   ```
-   ./accelwattch_traces
-   ```
-
-### Step 2: Build Docker Image
-Build the Docker image:
+### Step 1: Create a working directory in scratch
 ```bash
-docker build --platform linux/amd64 -t ubuntu-gcc-cuda .
+cd /scratch/
+mkdir fa24-gpu-project-group29-energy-consumption
+cd fa24-gpu-project-group29-energy-consumption
 ```
 
-### Step 3: Run Docker Container
-Run the container interactively:
+### Step 2: Change Singularity cache dir
 ```bash
-docker run -it ubuntu-gcc-cuda
+export SINGULARITY_CACHEDIR=$(pwd)
+source ~/.bashrc
 ```
 
-### Step 4: Open Docker Container
-If using a remote development environment (e.g., VS Code):
-1. Press `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux).
-2. Select **Dev Containers: Attach to Running Container....**.
-3. Navigate to the default working directory: `/root`.
+### Step 3: Pull and Build our Docker Image
+```bash
+singularity pull docker://akubal/ubuntu-gcc-cuda
+singularity build --sandbox extracted_container ubuntu-gcc-cuda_latest.sif
+```
+
+### Step 4: Start singularity container
+```bash
+singularity exec --writable --no-home --cleanenv extracted_container /bin/bash --rcfile /root/.bashrc
+export HOME=/root
+cd /root
+```
+
+### Step 5: Copy AccelWattch Traces to appropriate directory
+```bash
+cp -r /root/accel-sim-framework/accelwattch_traces/ /root/
+```
 
 ## Accel-Sim Setup
 
