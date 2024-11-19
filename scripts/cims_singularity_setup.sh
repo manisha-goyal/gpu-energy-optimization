@@ -15,4 +15,5 @@ singularity build --sandbox extracted_container ubuntu-gcc-cuda_latest.sif
 singularity exec --writable --no-home --cleanenv extracted_container /bin/bash --rcfile /root/.bashrc
 
 # Enter root
+export HOME=/root/
 cd /root/
