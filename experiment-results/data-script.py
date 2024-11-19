@@ -17,13 +17,22 @@ def check_accelwattch_logs(dataframe, subdirectory_path, chip, freq):
     # Ensure the Application column exists
     if 'Application' not in dataframe.columns:
         raise ValueError("DataFrame must contain a column named 'Application'")
-    extracted_df = pd.DataFrame(columns=[
-        "Application", 
-        "gpu_avg_TOT_INST", 
-        "gpu_tot_avg_power", 
-        "gpu_avg_FPUP", 
-        "gpu_avg_IDLE_COREP"
-    ])
+    extracted_df = pd.DataFrame(columns = [
+                                    "Application", 
+                                    "gpu_avg_TOT_INST", 
+                                    "gpu_tot_avg_power", 
+                                    "gpu_avg_FPUP", 
+                                    "gpu_avg_IDLE_COREP",
+                                    "kernel_avg_power",
+                                    "gpu_avg_CONSTP",
+                                    "gpu_avg_RFP",
+                                    "gpu_avg_STATICP",
+                                    "gpu_avg_DRAMP",
+                                    "gpu_avg_INTP",
+                                    "gpu_avg_SCHEDP",
+                                    "gpu_avg_L2CP",
+                                    "gpu_avg_SHRDP"
+                                ])
 
     for application in dataframe['Application']:
         # Construct the path to check
@@ -48,6 +57,15 @@ def check_accelwattch_logs(dataframe, subdirectory_path, chip, freq):
                 gpu_avg_FPUP = None
                 found_kernel_launch_uid = False
                 gpu_avg_IDLE_COREP = None
+                kernel_avg_power = None
+                gpu_avg_CONSTP = None
+                gpu_avg_RFP = None
+                gpu_avg_STATICP = None
+                gpu_avg_DRAMP = None
+                gpu_avg_INTP = None
+                gpu_avg_SCHEDP = None
+                gpu_avg_L2CP = None
+                gpu_avg_SHRDP = None
                 for line in reversed(lines):
                     if "kernel_launch_uid" in line:
                         found_kernel_launch_uid = True
@@ -61,6 +79,24 @@ def check_accelwattch_logs(dataframe, subdirectory_path, chip, freq):
                         gpu_avg_FPUP = float(line.split('=')[-1].strip().replace(',', ''))
                     elif "gpu_avg_IDLE_COREP" in line:
                         gpu_avg_IDLE_COREP = float(line.split('=')[-1].strip().replace(',', ''))
+                    elif "kernel_avg_power" in line:
+                        kernel_avg_power = float(line.split('=')[-1].strip().replace(',', ''))
+                    elif "gpu_avg_CONSTP" in line:
+                        gpu_avg_CONSTP = float(line.split('=')[-1].strip().replace(',', ''))
+                    elif "gpu_avg_RFP" in line:
+                        gpu_avg_RFP = float(line.split('=')[-1].strip().replace(',', ''))
+                    elif "gpu_avg_STATICP" in line:
+                        gpu_avg_STATICP = float(line.split('=')[-1].strip().replace(',', ''))
+                    elif "gpu_avg_DRAMP" in line:
+                        gpu_avg_DRAMP = float(line.split('=')[-1].strip().replace(',', ''))
+                    elif "gpu_avg_INTP" in line:
+                        gpu_avg_INTP = float(line.split('=')[-1].strip().replace(',', ''))
+                    elif "gpu_avg_SCHEDP" in line:
+                        gpu_avg_SCHEDP = float(line.split('=')[-1].strip().replace(',', ''))
+                    elif "gpu_avg_L2CP" in line:
+                        gpu_avg_L2CP = float(line.split('=')[-1].strip().replace(',', ''))
+                    elif "gpu_avg_SHRDP" in line:
+                        gpu_avg_SHRDP = float(line.split('=')[-1].strip().replace(',', ''))
 
                 # Only add data if kernel_launch_uid is found
                 if found_kernel_launch_uid:
@@ -69,7 +105,16 @@ def check_accelwattch_logs(dataframe, subdirectory_path, chip, freq):
                         "gpu_avg_TOT_INST": gpu_avg_TOT_INST,
                         "gpu_tot_avg_power": gpu_tot_avg_power,
                         "gpu_avg_FPUP": gpu_avg_FPUP,
-                        "gpu_avg_IDLE_COREP": gpu_avg_IDLE_COREP
+                        "gpu_avg_IDLE_COREP": gpu_avg_IDLE_COREP,
+                        "kernel_avg_power": kernel_avg_power,
+                        "gpu_avg_CONSTP": gpu_avg_CONSTP,
+                        "gpu_avg_RFP": gpu_avg_RFP,
+                        "gpu_avg_STATICP": gpu_avg_STATICP,
+                        "gpu_avg_DRAMP": gpu_avg_DRAMP,
+                        "gpu_avg_INTP": gpu_avg_INTP,
+                        "gpu_avg_SCHEDP": gpu_avg_SCHEDP,
+                        "gpu_avg_L2CP": gpu_avg_L2CP,
+                        "gpu_avg_SHRDP": gpu_avg_SHRDP
                     }])
                     extracted_df = pd.concat([extracted_df, temp_df], ignore_index=True)
 
@@ -148,6 +193,8 @@ def generate(data_dict):
 def process_experiment_results(base_directory):
     # Loop through each subdirectory in the base directory
     for subdirectory in os.listdir(base_directory):
+        if subdirectory.startswith('.'):
+            continue
         chip = subdirectory.split("_")[1].split("-")[0]
         freq = subdirectory.split("_")[1].split("-")[1].split(".")[0]
         subdirectory_path = os.path.join(base_directory, subdirectory)
