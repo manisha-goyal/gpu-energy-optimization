@@ -74,7 +74,7 @@ If using a remote development environment (e.g., VS Code):
    echo $ACCELSIM_ROOT
    echo $ACCELSIM_CONFIG
    ```
-   Ensure they are correctly set (e.g., `$ACCELSIM_ROOT` points to the Accel-Sim framework directory).
+   Ensure they are correctly set (e.g., `$ACCELSIM_ROOT` points to the Accel-Sim framework directory `/root/accel-sim-framework/gpu-simulator`).
 
 3. **Check GPU Simulator Build**:
    ```bash
@@ -143,7 +143,7 @@ The `experiment.sh` script is designed to run GPU energy optimization experiment
 
 2. **Execute the Experiment Script**:
    ```bash
-   ./experiment.sh
+   ./run_experiments.sh
    ```
 
 ### Aggregating Experiment Results

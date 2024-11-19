@@ -79,6 +79,13 @@ if [ $? -ne 0 ]; then
     log_message "Failed to build benchmark data."
 fi
 
+# Modify the line in the file to replace the dash after 'RTX on' with a space
+log_message "Replacing dash with space in the line after 'RTX on'..."
+sed -i 's|RTX on-The NVIDIA Turing GPU|RTX on The NVIDIA Turing GPU|' /root/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/tested-cfgs/SM75_RTX2060_S/gpgpusim.config
+if [ $? -ne 0 ]; then
+    log_message "Failed to replace dash with space in the line after 'RTX on'."
+fi
+
 # Unzipping trace files
 log_message "Unzipping Pascal traces..."
 tar -xvzf /root/accel-sim-framework/accelwattch_traces/accelwattch_pascal_traces.tgz -C /root/accel-sim-framework/accelwattch_traces
