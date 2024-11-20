@@ -4,31 +4,36 @@ This project focuses on optimizing GPU energy consumption using **Accel-Sim**, *
 
 ## Singularity Setup (Using docker image)
 
-### Step 1: Create a working directory in scratch
+### Step 1: Login to the HPC cuda cluster (any cuda machine)
+```bash
+ssh cuda4
+```
+
+### Step 2: Create a working directory in scratch
 ```bash
 cd /scratch/
 mkdir fa24-gpu-project-group29-energy-consumption
 cd fa24-gpu-project-group29-energy-consumption
 ```
 
-### Step 2: Change Singularity cache directory
+### Step 3: Change Singularity cache directory
 ```bash
 export SINGULARITY_CACHEDIR=$(pwd)
 source ~/.bashrc
 ```
 
-### Step 3: Pull and Build our Docker Image
+### Step 4: Pull and Build our Docker Image
 ```bash
 singularity pull docker://akubal/fa24-gpu-project-g29
 singularity build --sandbox extracted_container fa24-gpu-project-g29_latest.sif
 ```
 
-### Step 4: Start singularity container
+### Step 5: Start singularity container
 ```bash
 singularity exec --writable --no-home --cleanenv extracted_container /bin/bash --rcfile /root/.bashrc
 ```
 
-### Step 5: Change `HOME` dir
+### Step 6: Change `HOME` dir
 ```bash
 export HOME=/root
 ```
