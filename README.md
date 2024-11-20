@@ -26,13 +26,11 @@ singularity build --sandbox extracted_container ubuntu-gcc-cuda_latest.sif
 ### Step 4: Start singularity container
 ```bash
 singularity exec --writable --no-home --cleanenv extracted_container /bin/bash --rcfile /root/.bashrc
-export HOME=/root
-cd /root
 ```
 
-### Step 5: Copy AccelWattch Traces to appropriate directory
+### Step 5: Change `HOME` dir
 ```bash
-cp -r /root/accel-sim-framework/accelwattch_traces/ /root/
+export HOME=/root
 ```
 
 ## Accel-Sim Setup
@@ -40,10 +38,11 @@ cp -r /root/accel-sim-framework/accelwattch_traces/ /root/
 ### Step 1: Setup environment
 1. Navigate to the Accel-Sim framework directory:
    ```bash
-   cd accel-sim-framework
+   cd /root/accel-sim-framework
    ```
 
 2. Run the environment setup script:
+   **Note:** There is a **`<dot>`** before the executable, it is **`<dot><space><dot>/environment_setup.sh`**. Please do not miss the first dot, it might cause errors
    ```bash
    . ./environment_setup.sh
    ```
@@ -60,7 +59,7 @@ cp -r /root/accel-sim-framework/accelwattch_traces/ /root/
    
    ./cuda_11.0.1_450.36.06_linux.run --toolkit --silent --toolkitpath=$HOME/cuda
    
-   cd ~/accel-sim-framework/
+   cd /root/accel-sim-framework/
    ```
    If the installation fails the first time, run the shell script again (second last step above).
 
@@ -195,7 +194,8 @@ To further process and analyze the results from your experiments, follow these a
 ### Step 1: Navigate to the aggregate directory
 1. Change your working directory to the `aggregate` directory under the `accel-sim-framework`:
    ```bash
-   cd accel-sim-framework/aggregate```
+   cd accel-sim-framework/aggregate
+   ```
 
 ### Step 2: Copy CSV files for the chip
 Copy all the CSV files corresponding to a particular chip (eg. output_SM6_TITANX-1200.0.csv) into the `aggregate` directory. Ensure the files are organized and named appropriately for ease of identification.
@@ -203,4 +203,5 @@ Copy all the CSV files corresponding to a particular chip (eg. output_SM6_TITANX
 ### Step 3: Run the aggregation script
 Execute the aggregation script to combine the results:
 ```bash
-python3 aggregate-script.py```
+python3 aggregate-script.py
+```
