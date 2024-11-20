@@ -19,8 +19,8 @@ source ~/.bashrc
 
 ### Step 3: Pull and Build our Docker Image
 ```bash
-singularity pull docker://akubal/ubuntu-gcc-cuda
-singularity build --sandbox extracted_container ubuntu-gcc-cuda_latest.sif
+singularity pull docker://akubal/fa24-gpu-project-g29
+singularity build --sandbox extracted_container fa24-gpu-project-g29_latest.sif
 ```
 
 ### Step 4: Start singularity container
