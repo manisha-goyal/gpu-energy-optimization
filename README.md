@@ -42,12 +42,12 @@ export HOME=/root
    ```
 
 2. Run the environment setup script:
-   **Note:** There is a **`<dot>`** before the executable, it is **`<dot><space><dot>/environment_setup.sh`**. Please do not miss the first dot, it might cause errors
+   **Note:** There is a **`<dot>`** before the executable, it is **`<dot><space><dot>/environment_setup.sh`**. Please do not miss the first dot, it will cause errors.
    ```bash
    . ./environment_setup.sh
    ```
 
-3. Download and install to CUDA 11:
+3. Download and install CUDA 11:
    ```bash
    mkdir -p /tmp/cuda-install
 
@@ -107,21 +107,21 @@ The `experiment.sh` script is designed to run GPU energy optimization experiment
 ### Configuring the Experiment
 
 1. **Update the `GPU_CLOCKS` array**:
-   - Define the GPUs and their core clock frequencies for the experiments:
+   - Define the GPUs and their core clock frequencies for the experiments (if different from the default):
      ```bash
      declare -A GPU_CLOCKS
      GPU_CLOCKS=(
          # Pascal
-        ["SM6_TITANX"]="1200.0 1417.0 1620.0 1800.0"
-        # Volta
-        ["SM7_QV100"]="960.0 1132.0 1455.0 1600.0"
-        # Turing
-        ["SM75_RTX2060_S"]="1160.0 1365.0 1560.0 2000.0"
+         ["SM6_TITANX"]="1000.0 1200.0 1417.0 1620.0 1800.0"
+         # Volta
+         ["SM7_QV100"]="760.0 960.0 1132.0 1455.0 1600.0"
+         # Turing
+         ["SM75_RTX2060_S"]="1160.0 1365.0 1470.0 1700.0 1960.0"
      )
      ```
 
 2. **Add clock parameters**:
-   - Edit the `/root/accel-sim-framework/util/job_launching/configs/define-standard-cfgs.yml` file to include the clock parameters for your experiments:
+   - Edit the `/root/accel-sim-framework/util/job_launching/configs/define-standard-cfgs.yml` file to include the clock parameters for your experiments (if different from the default):
      ```yaml
      Pascal_1200.0MHZ:
          extra_params: "-gpgpu_clock_domains 1200.0:1200.0:1200.0:2500.0"
