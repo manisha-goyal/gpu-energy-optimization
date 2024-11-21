@@ -195,8 +195,8 @@ def process_experiment_results(base_directory):
     for subdirectory in os.listdir(base_directory):
         if subdirectory.startswith('.'):
             continue
-        chip = subdirectory.split("_")[1].split("-")[0]
-        freq = subdirectory.split("_")[1].split("-")[1].split(".")[0]
+        chip = subdirectory.split("_", 1)[1].split("-")[0]
+        freq = subdirectory.split("_", 1)[1].split("-")[1].split(".")[0]
         subdirectory_path = os.path.join(base_directory, subdirectory)
         #print(chip)
         # Check if it's a directory
