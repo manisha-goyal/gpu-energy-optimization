@@ -39,9 +39,9 @@ singularity exec --writable --no-home --cleanenv extracted_container /bin/bash -
 export HOME=/root
 ```
 
-## Accel-Sim Setup
+## Experiment Setup
 
-### Step 1: Setup environment
+### Instructions
 1. Navigate to the Accel-Sim framework directory:
    ```bash
    cd /root/accel-sim-framework
@@ -75,7 +75,7 @@ export HOME=/root
    ```
    If the installation fails the first time, run the shell script again (second last step above).
 
-### Step 2: Verify setup
+### Some helpful debugging step, incase of any errors
 
 1. **Check logs for errors**:
    Review the `environment_setup_log.txt` file to ensure no errors occurred during the setup:
@@ -85,23 +85,107 @@ export HOME=/root
    Look for any failure messages and address them before proceeding.
    
 2. **Check environment variables**:
+   Ensure the following env variables correctly set as shown below
    ```bash
    echo $ACCELSIM_ROOT
+   >>> "/root/accel-sim-framework/gpu-simulator"
    echo $ACCELSIM_CONFIG
+   >>> "release"
    ```
-   Ensure they are correctly set (e.g., `$ACCELSIM_ROOT` points to the Accel-Sim framework directory `/root/accel-sim-framework/gpu-simulator`).
 
 3. **Check GPU simulator build**:
-   ```bash
-   ls ./gpu-simulator/bin/release
-   ```
    Confirm that the GPU simulator binaries are available in the release directory.
+   ```bash
+   ls /root/accel-sim-framework/gpu-simulator/bin/release
+   >>> "accel-sim.out"
+   ```
+   
 
 If all these checks pass, your setup is complete.
 
-## Experiment Script
+## Run Experiment
 
-The `experiment.sh` script is designed to run GPU energy optimization experiments using **Accel-Sim**, **AccelWattch**, and **GPGPU-Sim**. It automates the process of setting clock frequencies, running simulations, collecting results, and managing trace paths specific to GPU architectures.
+1. **Navigate to the Accel-Sim framework directory**:
+   ```bash
+   cd /root/accel-sim-framework
+   ```
+
+2. **Execute the experiment script**:
+   ```bash
+   ./run_experiments.sh
+   ```
+
+## Genrating Experiment Results
+
+1. **Check all experiments results are generated**:
+   Ensure all simulation results are stored in the `experiment-results/` directory.
+   ```bash
+   ls /root/accel-sim-framework/experiment-results/
+   >>> experiment-results/
+         ├── SM6_TITANX-1200.0/
+         │   ├── backprop-rodinia-3.1/65536/TITANX-Accelwattch_SASS_SIM/
+         │   │   ├── accelwattch_power_report.log
+         │   │   └── ...
+         │   ├── b+tree-rodinia-3.1/65536/TITANX-Accelwattch_SASS_SIM/
+         │   │   ├── accelwattch_power_report.log
+         │   │   └── ...
+         │   └── SM6_TITANX-1200.0.csv
+         └── ...
+   ```
+   
+   
+
+2. **Run the aggregation script**:
+   - Use the Python script `data-script.py` to parse and aggregate results:
+     ```bash
+     python3 /root/accel-sim-framework/experiment-results/data-script.py
+     ```
+
+3. **Output of aggregation**:
+   The script consolidates results into output CSV files stored in their respective subdirectories within `experiment-results/`. In this case **`output_SM6_TITANX-1200.0.csv`**
+
+   - **File structure**:
+     ```
+      experiment-results/
+      ├── SM6_TITANX-1200.0/
+      │   ├── backprop-rodinia-3.1/65536/TITANX-Accelwattch_SASS_SIM/
+      │   │   ├── accelwattch_power_report.log
+      │   │   └── ...
+      │   ├── b+tree-rodinia-3.1/65536/TITANX-Accelwattch_SASS_SIM/
+      │   │   ├── accelwattch_power_report.log
+      │   │   └── ...
+      │   └── SM6_TITANX-1200.0.csv
+      │   └── output_SM6_TITANX-1200.0.csv
+      └── ...
+      ```
+   - **Log files**:
+      - Timing logs are appended to `./experiment-results/timing.log`.
+      - Aggregated results are saved as `output_<subdirectory>.csv`.
+   - **Verify aggregation output**:
+      - Ensure the aggregated files include key statistics such as `gpu_avg_TOT_INST`, `gpu_tot_avg_power`, and `gpu_avg_IDLE_COREP`.
+
+## Aggregating Results
+
+To further process and analyze the results from your experiments, follow these additional steps:
+
+### Step 1: Navigate to the aggregate directory
+1. Change your working directory to the `aggregate` directory under the `accel-sim-framework`:
+   ```bash
+   cd accel-sim-framework/aggregate
+   ```
+
+### Step 2: Copy CSV files for the chip
+Copy all the CSV files corresponding to a particular chip (eg. output_SM6_TITANX-1200.0.csv) into the `aggregate` directory. Ensure the files are organized and named appropriately for ease of identification.
+
+### Step 3: Run the aggregation script
+Execute the aggregation script to combine the results:
+```bash
+python3 aggregate-script.py
+```
+
+## Additional details for tinkering around
+
+The `run_experiments.sh` script is designed to run GPU energy optimization experiments using **Accel-Sim**, **AccelWattch**, and **GPGPU-Sim**. It automates the process of setting clock frequencies, running simulations, collecting results, and managing trace paths specific to GPU architectures.
 
 ### Key Features
 
@@ -116,7 +200,7 @@ The `experiment.sh` script is designed to run GPU energy optimization experiment
 3. **Results aggregation**:
    - Aggregates experiment results into consolidated output files using the Python script `data-script.py`.
 
-### Configuring the Experiment
+### Manually configuring the experiment
 
 1. **Update the `GPU_CLOCKS` array**:
    - Define the GPUs and their core clock frequencies for the experiments (if different from the default):
@@ -148,72 +232,3 @@ The `experiment.sh` script is designed to run GPU energy optimization experiment
      - Pascal traces: `/root/accel-sim-framework/accelwattch_traces/accelwattch_pascal_traces/11.0/`
      - Volta traces: `/root/accel-sim-framework/accelwattch_traces/accelwattch_volta_traces/11.0/`
      - Turing traces: `/root/accel-sim-framework/accelwattch_traces/accelwattch_turing_traces/11.0/`
-
-### Running the Experiment Script
-
-1. **Navigate to the Accel-Sim framework directory**:
-   ```bash
-   cd accel-sim-framework
-   ```
-
-2. **Execute the experiment script**:
-   ```bash
-   ./run_experiments.sh
-   ```
-
-### Aggregating Experiment Results
-
-1. **Prepare for result aggregation**:
-   - Ensure all simulation results are stored in the `experiment-results/` directory.
-
-2. **Run the aggregation script**:
-   - Use the Python script `data-script.py` to parse and aggregate results:
-     ```bash
-     python3 experiment-results/data-script.py
-     ```
-
-3. **Output of aggregation**:
-   - The script consolidates results into output CSV files stored in their respective subdirectories within `experiment-results/`.
-
-### Experiment Results
-
-- **File structure**:
-  ```
-  experiment-results/
-  ├── SM6_TITANX-1200.0/
-  │   ├── backprop-rodinia-3.1/65536/TITANX-Accelwattch_SASS_SIM/
-  │   │   ├── accelwattch_power_report.log
-  │   │   └── ...
-  │   ├── b+tree-rodinia-3.1/65536/TITANX-Accelwattch_SASS_SIM/
-  │   │   ├── accelwattch_power_report.log
-  │   │   └── ...
-  │   └── SM6_TITANX-1200.0.csv
-  │   └── output_SM6_TITANX-1200.0.csv
-  └── ...
-  ```
-
-- **Log files**:
-  - Timing logs are appended to `./experiment-results/timing.log`.
-  - Aggregated results are saved as `output_<subdirectory>.csv`.
-
-- **Verify aggregation output**:
-   - Ensure the aggregated files include key statistics such as `gpu_avg_TOT_INST`, `gpu_tot_avg_power`, and `gpu_avg_IDLE_COREP`.
-
-### Result Aggregation
-
-To further process and analyze the results from your experiments, follow these additional steps:
-
-### Step 1: Navigate to the aggregate directory
-1. Change your working directory to the `aggregate` directory under the `accel-sim-framework`:
-   ```bash
-   cd accel-sim-framework/aggregate
-   ```
-
-### Step 2: Copy CSV files for the chip
-Copy all the CSV files corresponding to a particular chip (eg. output_SM6_TITANX-1200.0.csv) into the `aggregate` directory. Ensure the files are organized and named appropriately for ease of identification.
-
-### Step 3: Run the aggregation script
-Execute the aggregation script to combine the results:
-```bash
-python3 aggregate-script.py
-```
