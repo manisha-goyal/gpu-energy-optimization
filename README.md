@@ -10,6 +10,7 @@ ssh cuda4
 ```
 
 ### Step 2: Create a working directory in scratch
+**Note:** Incase, `mkdir` give directory always exists error, please chose any available directory name and `cd` into that
 ```bash
 cd /scratch/
 mkdir fa24-gpu-project-group29-energy-consumption
@@ -54,9 +55,9 @@ export HOME=/root
 
 3. Download and install CUDA 11:
    ```bash
-   mkdir -p /tmp/cuda-install
+   mkdir -p /root/cuda-install
 
-   cd /tmp/cuda-install
+   cd /root/cuda-install
    
    wget http://developer.download.nvidia.com/compute/cuda/11.0.1/local_installers/cuda_11.0.1_450.36.06_linux.run
    
