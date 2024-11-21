@@ -16,7 +16,7 @@ for file_name in output_files:
     # Split the string by '-' and '.'
     parts = file_name.split('-')
     # Extract GPU name and frequency
-    GPU.append(parts[0].split('_')[-1])  # Extract GPU name (e.g., TITANX)
+    GPU.append(parts[0].split('_', 1)[-1])  # Extract GPU name (e.g., TITANX)
     frequency.append(parts[1].split('.')[0]) 
 
 dfs = []
@@ -35,5 +35,5 @@ for i in range(len(output_files)):
 #print(GPU)
 #print(frequency)
 combined_df = pd.concat(dfs, ignore_index=True)
-output_file = "combined_output.xlsx"
+output_file = f"{GPU[0]}.xlsx"
 combined_df.to_excel(output_file, index=False)
